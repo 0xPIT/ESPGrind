@@ -6,7 +6,7 @@ License: MIT<br>
 
 ### Overview
 
-This is a touchscreen controller for an espresso mill that runs on some ESP32 with touchscreen.
+This is a touchscreen controller for an espresso mill. It will runs on an ESP32.
 
 I made this because I got a very good espresso grinder with a broken controller super cheap. As always, the spare parts are unobtainuim or prohibitively expensive. [#rightToRepairNow](https://repair.eu/)
 
