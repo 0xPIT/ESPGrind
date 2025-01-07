@@ -8,13 +8,15 @@ License: MIT<br>
 
 This is a touchscreen controller for an espresso mill that runs on some ESP32 with touchscreen.
 
-I made this because I got a very good espresso grinder with a broken controller super cheap. As always, the spare parts are unobtainuim or super expensive. (#rightToRepairNow)
+I made this because I got a very good espresso grinder with a broken controller super cheap. As always, the spare parts are unobtainuim or prohibitively expensive. [#rightToRepairNow](https://repair.eu/)
 
-Beware: This was developed on a car ride from Munich to Berlin, so it will be mostly buggy.
+**Beware:** This was developed on a car ride from Munich to Berlin, so it will be mostly buggy. I appreciate your kind fix or improvement as a PR.
 
-I had a ESP32-BOX at hand, so this is what is runs on. It should be mostly trivial to run on other ESP32 baords with a touchscreen that works with [LVGL](https://docs.lvgl.io/master/intro/introduction.html) I used and liked [Squareline Studio](https://squareline.io/) to create the UI quickly.
+As always, I had a [ESP32-BOX](https://github.com/espressif/esp-box) at hand, so this is what is runs on. It should be mostly trivial to run on other ESP32 boards with a touchscreen that works with [LVGL](https://docs.lvgl.io/master/intro/introduction.html).
 
-I have another coffee grinder by a well-known Italian company called 🚀, and I enjoy their UI on my "👊o touch" mill daily, so I mostly ~~stole~~ borrowed it. I added nice arcs around the buttons that indicate the remaining time.
+I used (and liked!) [Squareline Studio](https://squareline.io/) to create the UI (320x240). Most of the UI is flex layout, so it should be easy to adapt to other resolutions.
+
+My other coffee grinder by a well-known Italian company called "🚀". As I enjoy their UI on my "👊-o touch" mill daily, I ~~mostly stole it~~ was inspired by it. I added some nice arcs around the buttons that indicate the remaining time and simplified the settings screen.
 
 ### Features
 - 3 Programmable Timers (I, II, III)
