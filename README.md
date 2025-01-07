@@ -32,6 +32,9 @@ Proposal:
 - A "Mean Well" IRM 03 5V AC power supply module to power it
 - Use a solid state relay (PCBs with 4 are very cheap on $AMZN or $EBAY) to control the mill motor.
 
+### Demo
+[![Demo Video](http://img.youtube.com/vi/ctp5HUnxMbU/0.jpg)](https://youtu.be/ctp5HUnxMbU)
+
 ### Screenshots
 ![Main Screen](doc/screenshots/main.png)
 Main Screen
