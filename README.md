@@ -33,6 +33,8 @@ Proposal:
 - Use a solid state relay (PCBs with 4 are very cheap on $AMZN or $EBAY) to control the mill motor.
 
 ### Demo
+Click image to see a demo and me struggling with the LVGL switch widget
+
 [![Demo Video](http://img.youtube.com/vi/ctp5HUnxMbU/0.jpg)](https://youtu.be/ctp5HUnxMbU)
 
 ### Screenshots
