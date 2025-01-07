@@ -16,7 +16,7 @@ As always, I had a [ESP32-BOX](https://github.com/espressif/esp-box) at hand, so
 
 I used (and liked!) [Squareline Studio](https://squareline.io/) to create the UI (320x240). Most of the UI is flex layout, so it should be easy to adapt to other resolutions.
 
-My other coffee grinder by a well-known Italian company called "🚀". As I enjoy their UI on my "👊-o touch" mill daily, I ~~mostly stole it~~ was inspired by it. I added some nice arcs around the buttons that indicate the remaining time and simplified the settings screen.
+My other coffee grinder is made by a well-known Italian company called "🚀". As I enjoy their UI on my "👊-o touch" (👊 in German, i.e. [faʊ̯st]) mill daily, so I ~~mostly stole it~~ was inspired by it. I improved it by adding some nice arcs around the buttons that indicate the remaining time and simplified the settings screen.
 
 ### Features
 - 3 Programmable Timers (I, II, III)
