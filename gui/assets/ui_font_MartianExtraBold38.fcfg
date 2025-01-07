@@ -1,0 +1,16 @@
+{
+  "codename": "MartianExtraBold38",
+  "ttf_path": "/assets/MartianMono-ExtraBold.ttf",
+  "bin_path": "/assets/ui_font_MartianExtraBold38.bin",
+  "c_path": "/assets/ui_font_MartianExtraBold38.c",
+  "cfg_path": "/assets/ui_font_MartianExtraBold38.fcfg",
+  "size": 38,
+  "bpp": 1,
+  "letters": 0,
+  "ranges": [
+    "0x20-0x7f"
+  ],
+  "symbols": "",
+  "customparams": "--no-compress --no-prefilter",
+  "uploaded": false
+}
