@@ -1,4 +1,20 @@
+//
+// Espresso mill controller
+// (c) 2025 karl@pitrich.com
+//
+
+#include <stdint.h>
+#include "driver/gpio.h"
 #include "mill.h"
+
+typedef struct {
+    gpio_num_t relais_pin;
+    uint32_t on_level;
+} mill_config_t;
+
+typedef struct {
+    bool is_milling;
+} mill_state_t;
 
 static const mill_config_t MillConfig = {
     .relais_pin = GPIO_NUM_14,

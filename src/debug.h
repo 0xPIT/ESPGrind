@@ -1,3 +1,9 @@
+//
+// Espresso mill controller
+// (c) 2025 karl@pitrich.com
+//
+
+#pragma once
 
 #ifdef DEBUG
 uint64_t last_event_print = 0;

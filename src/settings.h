@@ -1,9 +1,12 @@
+//
+// Espresso mill controller
+// (c) 2025 karl@pitrich.com
+//
 
 #pragma once
 
 #include <stdint.h>
-#include "esp_log.h"
-#include "esp_check.h"
+#include "esp_err.h"
 
 typedef struct {
     int32_t timer_defaults[4];
@@ -16,3 +19,4 @@ esp_err_t settingsLoad(void);
 settings_t *settingsGet(void);
 esp_err_t settingsSave(void);
 void settingsSaveDeferred(void);
+esp_err_t settingsInit(void);

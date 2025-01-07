@@ -1,6 +1,6 @@
 //
 // Espresso mill controller
-// (c)2025 karl@pitrich.com
+// (c) 2025 karl@pitrich.com
 //
 // Bugs:
 // 1. the manual grund button does not behave corectly: 
@@ -13,7 +13,6 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "lvgl.h"
-#include "esp_timer.h"
 #include "bsp/esp-box.h"
 
 #include "mill.h"
@@ -21,11 +20,11 @@
 #include "ui.h"
 
 static bool initialized = false;
-static uint32_t previousValue = 0;
 
 static lv_timer_t *timer = NULL;
 static const uint8_t timerStep = 20; // ms
 static const uint32_t maxManualGrindTime = 6000; // 60.00 seconds in display units
+static uint32_t timerStartValue = 0;
 
 static lv_obj_t *lastFocussed = NULL;
 lv_group_t *focusGroup = NULL;
@@ -52,6 +51,18 @@ void saveChangedTime() {
     }
 }
 
+void countButtonEvent(lv_obj_t *button) {
+    settings_t *settings = settingsGet();
+    lv_obj_t **grindButtons = getGrindButtons();
+    for (int i = 0; i < 4; i++) {
+        if (grindButtons[i] == button) {
+            settings->counters[i]++;
+            settingsSaveDeferred();
+            break;
+        }
+    }
+}
+
 void onDecreaseTime1(lv_event_t *e) {
     lv_spinbox_decrement(ui_Timer);
     saveChangedTime();
@@ -70,45 +81,44 @@ static bool timerRunning() {
     return timer && lv_timer_get_paused(timer) == false;
 }
 
-static void handleManualGrind(void) {
-    int32_t current_value = lv_spinbox_get_value(ui_Timer);
-    int32_t new_value = current_value + (timerStep / 10); // count up
+static void handleManualGrindTimer(void) {
+    int32_t currentValue = lv_spinbox_get_value(ui_Timer);
+    int32_t newValue = currentValue + (timerStep / 10); // count up
 
-    if (new_value >= maxManualGrindTime) {
+    if (newValue >= maxManualGrindTime) {
         millOff();
         lv_timer_pause(timer);
-        new_value = maxManualGrindTime;
+        newValue = maxManualGrindTime;
     }
 
-    updateTimerDisplay(new_value);
+    updateTimerDisplay(newValue);
 }
 
-static void handlePresetGrind(lv_obj_t *target) {
-    int32_t current_value = lv_spinbox_get_value(ui_Timer);
-    int32_t new_value = current_value - (timerStep / 10); // count down
+static void handlePresetGrindTimer(lv_obj_t *target) {
+    int32_t currentValue = lv_spinbox_get_value(ui_Timer);
+    int32_t newValue = currentValue - (timerStep / 10); // count down
 
-    if (new_value < 0) {
+    if (newValue < 0) {
         lv_timer_pause(timer);
         millOff();
-        updateTimerDisplay(previousValue);
+        updateTimerDisplay(timerStartValue);
         lv_arc_set_value(target, 100);
         return;
     }
 
-    updateTimerDisplay(new_value);
-
-    float arc_value = 100.0 / (float)previousValue * ((float)new_value);
-    lv_arc_set_value(target, (int32_t)arc_value);
+    updateTimerDisplay(newValue);
+    float arcValue = 100.0 / (float)timerStartValue * (float)newValue;
+    lv_arc_set_value(target, (int32_t)arcValue);
 }
 
 static void onTimer(lv_timer_t *timer) {
     lv_obj_t *target = lv_timer_get_user_data(timer);
     
     if (target == ui_GrindM) {
-        handleManualGrind();
+        handleManualGrindTimer();
     }
     else {
-        handlePresetGrind(target);
+        handlePresetGrindTimer(target);
     }
 }
 
@@ -122,37 +132,30 @@ void onGrindFocussed(lv_event_t *e) {
     for (int i = 0; i < 4; i++) {
         if (grindButtons[i] == ui_Element) {
             updateTimerDisplay(settings->timer_defaults[i]);
+
             if (lastFocussed != ui_Element) {
                 focusChange = true;
             }
             lastFocussed = ui_Element;
+   
             if (initialized) {
                 if (settings->last_focussed != i) {
                     settings->last_focussed = i;
                     settingsSaveDeferred();
                 }
             }
-        }
-    }
-}
 
-void countButtonEvent(lv_obj_t *button) {
-    settings_t *settings = settingsGet();
-    lv_obj_t **grindButtons = getGrindButtons();
-    for (int i = 0; i < 4; i++) {
-        if (grindButtons[i] == button) {
-            settings->counters[i]++;
-            settingsSaveDeferred();
             break;
         }
     }
 }
 
 void onGrindClicked(lv_event_t *e) {
-    lv_obj_t *ui_Element = lv_event_get_current_target(e);
+    lv_obj_t *clickedGrindButton = lv_event_get_current_target(e);
+    bool isManualGrind = clickedGrindButton == ui_GrindM;
 
     if (timerRunning()) {
-        if (millIsMilling() && ui_Element == ui_GrindM) {
+        if (isManualGrind && millIsMilling()) {
             millOff();
             lv_timer_pause(timer);
         }
@@ -169,28 +172,29 @@ void onGrindClicked(lv_event_t *e) {
         lv_timer_pause(timer);
     }
 
-    lv_arc_set_value(ui_Element, 100);
-    lv_timer_set_user_data(timer, ui_Element);
+    lv_arc_set_value(clickedGrindButton, 100);
+    lv_timer_set_user_data(timer, clickedGrindButton);
     lv_timer_set_period(timer, timerStep);
 
-    if (ui_Element == ui_GrindM) {
-        previousValue = 0;
+    if (isManualGrind) {
+        timerStartValue = 0;
         lv_timer_set_repeat_count(timer, maxManualGrindTime * (timerStep / 10));
-    } else {
-        previousValue = lv_spinbox_get_value(ui_Timer);
-        lv_timer_set_repeat_count(timer, previousValue * (timerStep / 10));
+    } 
+    else {
+        timerStartValue = lv_spinbox_get_value(ui_Timer);
+        lv_timer_set_repeat_count(timer, timerStartValue * (timerStep / 10));
     }
 
     lv_timer_reset(timer);
     lv_timer_resume(timer);
     millOn();
-    countButtonEvent(ui_Element);
+    countButtonEvent(clickedGrindButton);
 }
 
 void editModeEnable() {
     lv_obj_remove_flag(ui_Plus, LV_OBJ_FLAG_HIDDEN);
     lv_obj_remove_flag(ui_Minus, LV_OBJ_FLAG_HIDDEN);
-    lv_spinbox_set_cursor_pos(ui_Timer, 1);
+    lv_spinbox_set_cursor_pos(ui_Timer, 1); // first decimal
 }
 
 void editModeDisable() {
@@ -208,14 +212,6 @@ void editEnableChanged(lv_event_t *e) {
     }
 }
 
-void createFocusGroup() {
-    focusGroup = lv_group_create();
-    lv_obj_t **grindButtons = getGrindButtons();
-    for (int i = 0; i < 4; i++) {
-        lv_group_add_obj(focusGroup, grindButtons[i]);
-    }
-}
-
 void onBrightnessChanged(lv_event_t *e) {
     settings_t *settings = settingsGet();
     settings->brightness = lv_slider_get_value(ui_BrightnessSlider);
@@ -230,6 +226,7 @@ void onSettingsScreenLoaded(lv_event_t *e) {
     settings_t *settings = settingsGet();
     lv_slider_set_value(ui_BrightnessSlider, settings->brightness, LV_ANIM_OFF);
 
+
     lv_obj_t *grindCounters[4] = {ui_Counter1, ui_Counter2, ui_Counter3, ui_Counter4};
     for (int i = 0; i < 4; i++) {
         lv_label_set_text_fmt(grindCounters[i], "%ld", settings->counters[i]);
@@ -237,20 +234,29 @@ void onSettingsScreenLoaded(lv_event_t *e) {
 }
 
 void onMainScreenLoaded(lv_event_t *e) {
+    // update gui with elements not available in squareline studio
+    lv_label_set_text(ui_SettingsLabel, LV_SYMBOL_SETTINGS);
+
     editEnableChanged(NULL);
+}
+
+void createButtonFocusGroup() {
+    focusGroup = lv_group_create();
+    lv_obj_t **grindButtons = getGrindButtons();
+    for (int i = 0; i < 4; i++) {
+        lv_group_add_obj(focusGroup, grindButtons[i]);
+    }
 }
 
 void ui_InitialActions(lv_event_t *e) {
     millInit();
+    settingsInit();
     editModeDisable();
-    createFocusGroup();
-
-    lv_label_set_text(ui_SettingsLabel, LV_SYMBOL_SETTINGS);
+    createButtonFocusGroup();
 
     lv_obj_t **grindButtons = getGrindButtons();
     settings_t *settings = settingsGet();
 
-    lv_slider_set_value(ui_BrightnessSlider, settings->brightness, LV_ANIM_OFF);
     bsp_display_brightness_set(settings->brightness);
 
     for (int i = 0; i < 4; i++) {
@@ -258,6 +264,7 @@ void ui_InitialActions(lv_event_t *e) {
             lastFocussed = grindButtons[settings->last_focussed];
             lv_group_focus_obj(lastFocussed);
             focusChange = false;
+            break;
         }
     }
 
