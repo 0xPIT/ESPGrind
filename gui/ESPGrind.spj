@@ -145,82 +145,6 @@
                         "strtype": "LABEL/Style_main",
                         "strval": "lv.PART.MAIN, Text, Rectangle, Pad, Transform",
                         "InheritedType": 11
-                      },
-                      {
-                        "disabled": false,
-                        "nid": 1000210,
-                        "strtype": "_event/EventHandler",
-                        "strval": "LONG_PRESSED",
-                        "childs": [
-                          {
-                            "nid": 1000211,
-                            "strtype": "_event/name",
-                            "strval": "Settings",
-                            "InheritedType": 10
-                          },
-                          {
-                            "nid": 1000212,
-                            "strtype": "_event/condition_C",
-                            "strval": "",
-                            "InheritedType": 10
-                          },
-                          {
-                            "nid": 1000213,
-                            "strtype": "_event/condition_P",
-                            "strval": "",
-                            "InheritedType": 10
-                          },
-                          {
-                            "nid": 1000214,
-                            "strtype": "_event/action",
-                            "strval": "CHANGE SCREEN",
-                            "childs": [
-                              {
-                                "nid": 1000215,
-                                "strtype": "CHANGE SCREEN/Name",
-                                "strval": "CHANGE SCREEN",
-                                "InheritedType": 10
-                              },
-                              {
-                                "nid": 1000216,
-                                "strtype": "CHANGE SCREEN/Call",
-                                "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
-                                "InheritedType": 10
-                              },
-                              {
-                                "nid": 1000217,
-                                "strtype": "CHANGE SCREEN/CallC",
-                                "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
-                                "InheritedType": 10
-                              },
-                              {
-                                "nid": 1000218,
-                                "strtype": "CHANGE SCREEN/Screen_to",
-                                "strval": "GUID93731368-477541S93142",
-                                "InheritedType": 9
-                              },
-                              {
-                                "nid": 1000219,
-                                "strtype": "CHANGE SCREEN/Fade_mode",
-                                "strval": "MOVE_TOP",
-                                "InheritedType": 3
-                              },
-                              {
-                                "nid": 1000220,
-                                "strtype": "CHANGE SCREEN/Speed",
-                                "integer": 250,
-                                "InheritedType": 6
-                              },
-                              {
-                                "nid": 1000221,
-                                "strtype": "CHANGE SCREEN/Delay",
-                                "InheritedType": 6
-                              }
-                            ],
-                            "InheritedType": 10
-                          }
-                        ],
-                        "InheritedType": 4
                       }
                     ],
                     "saved_objtypeKey": "LABEL",
@@ -287,6 +211,7 @@
                   },
                   {
                     "nid": 90,
+                    "flags": 1048576,
                     "strtype": "OBJECT/Flags",
                     "InheritedType": 1
                   },
@@ -382,25 +307,6 @@
                           }
                         ],
                         "InheritedType": 1
-                      },
-                      {
-                        "nid": 40000,
-                        "strtype": "_style/StyleState",
-                        "strval": "DISABLED",
-                        "childs": [
-                          {
-                            "nid": 40520,
-                            "strtype": "_style/Bg_Color",
-                            "intarray": [
-                              255,
-                              255,
-                              255,
-                              0
-                            ],
-                            "InheritedType": 7
-                          }
-                        ],
-                        "InheritedType": 1
                       }
                     ],
                     "nid": 1010,
@@ -412,12 +318,12 @@
                     "disabled": false,
                     "nid": 1000206,
                     "strtype": "_event/EventHandler",
-                    "strval": "LONG_PRESSED",
+                    "strval": "CLICKED",
                     "childs": [
                       {
                         "nid": 1000207,
                         "strtype": "_event/name",
-                        "strval": "onSettingsLongPressed",
+                        "strval": "settingsClicked",
                         "InheritedType": 10
                       },
                       {
@@ -972,10 +878,12 @@
                           {
                             "nid": 40310,
                             "strtype": "_style/Arc_Color",
+                            "strval": "DisabledBorder",
+                            "integer": 1000778,
                             "intarray": [
-                              60,
-                              80,
-                              190,
+                              117,
+                              117,
+                              117,
                               255
                             ],
                             "InheritedType": 7
@@ -1027,7 +935,7 @@
                     "disabled": false,
                     "nid": 1000317,
                     "strtype": "_event/EventHandler",
-                    "strval": "SHORT_CLICKED",
+                    "strval": "CLICKED",
                     "childs": [
                       {
                         "nid": 1000318,
@@ -2190,10 +2098,12 @@
                           {
                             "nid": 40310,
                             "strtype": "_style/Arc_Color",
+                            "strval": "DisabledBorder",
+                            "integer": 1000778,
                             "intarray": [
-                              60,
-                              80,
-                              190,
+                              117,
+                              117,
+                              117,
                               255
                             ],
                             "InheritedType": 7
@@ -2245,7 +2155,7 @@
                     "disabled": false,
                     "nid": 1000317,
                     "strtype": "_event/EventHandler",
-                    "strval": "SHORT_CLICKED",
+                    "strval": "CLICKED",
                     "childs": [
                       {
                         "nid": 1000318,
@@ -2662,12 +2572,6 @@
                         "InheritedType": 2
                       },
                       {
-                        "nid": 200,
-                        "strtype": "OBJECT/Event_bubble",
-                        "strval": "True",
-                        "InheritedType": 2
-                      },
-                      {
                         "nid": 210,
                         "strtype": "OBJECT/Gesture_bubble",
                         "strval": "False",
@@ -2722,7 +2626,6 @@
                       },
                       {
                         "nid": 1010,
-                        "flags": 1048576,
                         "strtype": "ARC/Arc",
                         "InheritedType": 1
                       },
@@ -2923,10 +2826,12 @@
                               {
                                 "nid": 40310,
                                 "strtype": "_style/Arc_Color",
+                                "strval": "DisabledBorder",
+                                "integer": 1000778,
                                 "intarray": [
-                                  60,
-                                  80,
-                                  190,
+                                  117,
+                                  117,
+                                  117,
                                   255
                                 ],
                                 "InheritedType": 7
@@ -3048,7 +2953,7 @@
                           {
                             "nid": 1000690,
                             "strtype": "_event/name",
-                            "strval": "grindMClick",
+                            "strval": "grindMClicked",
                             "InheritedType": 10
                           },
                           {
@@ -3094,6 +2999,136 @@
                               },
                               {
                                 "nid": 1000698,
+                                "strtype": "CALL FUNCTION/Dont_export_function",
+                                "strval": "False",
+                                "InheritedType": 2
+                              }
+                            ],
+                            "InheritedType": 10
+                          }
+                        ],
+                        "InheritedType": 4
+                      },
+                      {
+                        "disabled": false,
+                        "nid": 1000737,
+                        "strtype": "_event/EventHandler",
+                        "strval": "PRESSED",
+                        "childs": [
+                          {
+                            "nid": 1000738,
+                            "strtype": "_event/name",
+                            "strval": "grindMPressed",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000739,
+                            "strtype": "_event/condition_C",
+                            "strval": "",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000740,
+                            "strtype": "_event/condition_P",
+                            "strval": "",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000745,
+                            "strtype": "_event/action",
+                            "strval": "CALL FUNCTION",
+                            "childs": [
+                              {
+                                "nid": 1000746,
+                                "strtype": "CALL FUNCTION/Name",
+                                "strval": "CALL FUNCTION",
+                                "InheritedType": 10
+                              },
+                              {
+                                "nid": 1000747,
+                                "strtype": "CALL FUNCTION/Call",
+                                "strval": "<{Function_name}>( event_struct )",
+                                "InheritedType": 10
+                              },
+                              {
+                                "nid": 1000748,
+                                "strtype": "CALL FUNCTION/CallC",
+                                "strval": "<{Function_name}>( e );",
+                                "InheritedType": 10
+                              },
+                              {
+                                "nid": 1000749,
+                                "strtype": "CALL FUNCTION/Function_name",
+                                "strval": "onManualGrindPush",
+                                "InheritedType": 10
+                              },
+                              {
+                                "nid": 1000750,
+                                "strtype": "CALL FUNCTION/Dont_export_function",
+                                "strval": "False",
+                                "InheritedType": 2
+                              }
+                            ],
+                            "InheritedType": 10
+                          }
+                        ],
+                        "InheritedType": 4
+                      },
+                      {
+                        "disabled": false,
+                        "nid": 1000741,
+                        "strtype": "_event/EventHandler",
+                        "strval": "RELEASED",
+                        "childs": [
+                          {
+                            "nid": 1000742,
+                            "strtype": "_event/name",
+                            "strval": "grindMReleased",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000743,
+                            "strtype": "_event/condition_C",
+                            "strval": "",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000744,
+                            "strtype": "_event/condition_P",
+                            "strval": "",
+                            "InheritedType": 10
+                          },
+                          {
+                            "nid": 1000751,
+                            "strtype": "_event/action",
+                            "strval": "CALL FUNCTION",
+                            "childs": [
+                              {
+                                "nid": 1000752,
+                                "strtype": "CALL FUNCTION/Name",
+                                "strval": "CALL FUNCTION",
+                                "InheritedType": 10
+                              },
+                              {
+                                "nid": 1000753,
+                                "strtype": "CALL FUNCTION/Call",
+                                "strval": "<{Function_name}>( event_struct )",
+                                "InheritedType": 10
+                              },
+                              {
+                                "nid": 1000754,
+                                "strtype": "CALL FUNCTION/CallC",
+                                "strval": "<{Function_name}>( e );",
+                                "InheritedType": 10
+                              },
+                              {
+                                "nid": 1000755,
+                                "strtype": "CALL FUNCTION/Function_name",
+                                "strval": "onManualGrindPush",
+                                "InheritedType": 10
+                              },
+                              {
+                                "nid": 1000756,
                                 "strtype": "CALL FUNCTION/Dont_export_function",
                                 "strval": "False",
                                 "InheritedType": 2
@@ -3755,10 +3790,12 @@
                           {
                             "nid": 40310,
                             "strtype": "_style/Arc_Color",
+                            "strval": "DisabledBorder",
+                            "integer": 1000778,
                             "intarray": [
-                              60,
-                              80,
-                              190,
+                              117,
+                              117,
+                              117,
                               255
                             ],
                             "InheritedType": 7
@@ -3810,7 +3847,7 @@
                     "disabled": false,
                     "nid": 1000317,
                     "strtype": "_event/EventHandler",
-                    "strval": "SHORT_CLICKED",
+                    "strval": "CLICKED",
                     "childs": [
                       {
                         "nid": 1000318,
@@ -4086,8 +4123,7 @@
                 "InheritedType": 11
               }
             ],
-            "saved_objtypeKey": "CONTAINER",
-            "tree_closed": true
+            "saved_objtypeKey": "CONTAINER"
           },
           {
             "guid": "GUID94402766-477513S47242",
@@ -4333,12 +4369,6 @@
                     "InheritedType": 2
                   },
                   {
-                    "nid": 140,
-                    "strtype": "OBJECT/Click_focusable",
-                    "strval": "False",
-                    "InheritedType": 2
-                  },
-                  {
                     "nid": 210,
                     "strtype": "OBJECT/Gesture_bubble",
                     "strval": "False",
@@ -4388,7 +4418,6 @@
                   },
                   {
                     "nid": 320,
-                    "flags": 1048576,
                     "strtype": "OBJECT/States",
                     "InheritedType": 1
                   },
@@ -4589,15 +4618,15 @@
                         "InheritedType": 2
                       },
                       {
-                        "nid": 180,
-                        "strtype": "OBJECT/Overflow_visible",
-                        "strval": "True",
+                        "nid": 210,
+                        "strtype": "OBJECT/Gesture_bubble",
+                        "strval": "False",
                         "InheritedType": 2
                       },
                       {
-                        "nid": 200,
-                        "strtype": "OBJECT/Event_bubble",
-                        "strval": "True",
+                        "nid": 220,
+                        "strtype": "OBJECT/Snappable",
+                        "strval": "False",
                         "InheritedType": 2
                       },
                       {
@@ -4738,6 +4767,27 @@
                             "InheritedType": 1
                           },
                           {
+                            "nid": 20000,
+                            "strtype": "_style/StyleState",
+                            "strval": "CHECKED",
+                            "childs": [
+                              {
+                                "nid": 20520,
+                                "strtype": "_style/Bg_Color",
+                                "strval": "Focussed",
+                                "integer": 1000461,
+                                "intarray": [
+                                  48,
+                                  80,
+                                  160,
+                                  255
+                                ],
+                                "InheritedType": 7
+                              }
+                            ],
+                            "InheritedType": 1
+                          },
+                          {
                             "nid": 70000,
                             "strtype": "_style/StyleState",
                             "strval": "FOCUSED",
@@ -4745,12 +4795,12 @@
                               {
                                 "nid": 70520,
                                 "strtype": "_style/Bg_Color",
-                                "strval": "Red",
-                                "integer": 1000462,
+                                "strval": "Focussed",
+                                "integer": 1000461,
                                 "intarray": [
-                                  170,
-                                  0,
-                                  0,
+                                  48,
+                                  80,
+                                  160,
                                   255
                                 ],
                                 "InheritedType": 7
@@ -5371,12 +5421,6 @@
                     "InheritedType": 2
                   },
                   {
-                    "nid": 140,
-                    "strtype": "OBJECT/Click_focusable",
-                    "strval": "False",
-                    "InheritedType": 2
-                  },
-                  {
                     "nid": 210,
                     "strtype": "OBJECT/Gesture_bubble",
                     "strval": "False",
@@ -5546,8 +5590,7 @@
                     "InheritedType": 4
                   }
                 ],
-                "saved_objtypeKey": "BUTTON",
-                "tree_closed": true
+                "saved_objtypeKey": "BUTTON"
               }
             ],
             "dont_export": false,
@@ -5892,6 +5935,82 @@
               }
             ],
             "InheritedType": 4
+          },
+          {
+            "disabled": false,
+            "nid": 1000699,
+            "strtype": "_event/EventHandler",
+            "strval": "GESTURE_UP(GESTURE)",
+            "childs": [
+              {
+                "nid": 1000700,
+                "strtype": "_event/name",
+                "strval": "swipeUp",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000701,
+                "strtype": "_event/condition_C",
+                "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000702,
+                "strtype": "_event/condition_P",
+                "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000703,
+                "strtype": "_event/action",
+                "strval": "CHANGE SCREEN",
+                "childs": [
+                  {
+                    "nid": 1000704,
+                    "strtype": "CHANGE SCREEN/Name",
+                    "strval": "CHANGE SCREEN",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000705,
+                    "strtype": "CHANGE SCREEN/Call",
+                    "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000706,
+                    "strtype": "CHANGE SCREEN/CallC",
+                    "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000707,
+                    "strtype": "CHANGE SCREEN/Screen_to",
+                    "strval": "GUID93731368-477541S93142",
+                    "InheritedType": 9
+                  },
+                  {
+                    "nid": 1000708,
+                    "strtype": "CHANGE SCREEN/Fade_mode",
+                    "strval": "MOVE_TOP",
+                    "InheritedType": 3
+                  },
+                  {
+                    "nid": 1000709,
+                    "strtype": "CHANGE SCREEN/Speed",
+                    "integer": 300,
+                    "InheritedType": 6
+                  },
+                  {
+                    "nid": 1000710,
+                    "strtype": "CHANGE SCREEN/Delay",
+                    "InheritedType": 6
+                  }
+                ],
+                "InheritedType": 10
+              }
+            ],
+            "InheritedType": 4
           }
         ],
         "saved_objtypeKey": "SCREEN"
@@ -6038,82 +6157,6 @@
                         "strtype": "LABEL/Style_main",
                         "strval": "lv.PART.MAIN, Text, Rectangle, Pad, Transform",
                         "InheritedType": 11
-                      },
-                      {
-                        "disabled": false,
-                        "nid": 1000210,
-                        "strtype": "_event/EventHandler",
-                        "strval": "LONG_PRESSED",
-                        "childs": [
-                          {
-                            "nid": 1000211,
-                            "strtype": "_event/name",
-                            "strval": "Settings",
-                            "InheritedType": 10
-                          },
-                          {
-                            "nid": 1000212,
-                            "strtype": "_event/condition_C",
-                            "strval": "",
-                            "InheritedType": 10
-                          },
-                          {
-                            "nid": 1000213,
-                            "strtype": "_event/condition_P",
-                            "strval": "",
-                            "InheritedType": 10
-                          },
-                          {
-                            "nid": 1000214,
-                            "strtype": "_event/action",
-                            "strval": "CHANGE SCREEN",
-                            "childs": [
-                              {
-                                "nid": 1000215,
-                                "strtype": "CHANGE SCREEN/Name",
-                                "strval": "CHANGE SCREEN",
-                                "InheritedType": 10
-                              },
-                              {
-                                "nid": 1000216,
-                                "strtype": "CHANGE SCREEN/Call",
-                                "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
-                                "InheritedType": 10
-                              },
-                              {
-                                "nid": 1000217,
-                                "strtype": "CHANGE SCREEN/CallC",
-                                "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
-                                "InheritedType": 10
-                              },
-                              {
-                                "nid": 1000218,
-                                "strtype": "CHANGE SCREEN/Screen_to",
-                                "strval": "GUID93731368-477541S93142",
-                                "InheritedType": 9
-                              },
-                              {
-                                "nid": 1000219,
-                                "strtype": "CHANGE SCREEN/Fade_mode",
-                                "strval": "MOVE_TOP",
-                                "InheritedType": 3
-                              },
-                              {
-                                "nid": 1000220,
-                                "strtype": "CHANGE SCREEN/Speed",
-                                "integer": 250,
-                                "InheritedType": 6
-                              },
-                              {
-                                "nid": 1000221,
-                                "strtype": "CHANGE SCREEN/Delay",
-                                "InheritedType": 6
-                              }
-                            ],
-                            "InheritedType": 10
-                          }
-                        ],
-                        "InheritedType": 4
                       }
                     ],
                     "saved_objtypeKey": "LABEL",
@@ -7380,6 +7423,12 @@
                         "InheritedType": 1
                       },
                       {
+                        "nid": 330,
+                        "strtype": "OBJECT/Checked",
+                        "strval": "True",
+                        "InheritedType": 2
+                      },
+                      {
                         "part": "lv.PART.MAIN",
                         "childs": [],
                         "nid": 1010,
@@ -7389,29 +7438,7 @@
                       },
                       {
                         "part": "lv.PART.INDICATOR",
-                        "childs": [
-                          {
-                            "nid": 20000,
-                            "strtype": "_style/StyleState",
-                            "strval": "CHECKED",
-                            "childs": [
-                              {
-                                "nid": 20520,
-                                "strtype": "_style/Bg_Color",
-                                "strval": "Red",
-                                "integer": 1000462,
-                                "intarray": [
-                                  170,
-                                  0,
-                                  0,
-                                  255
-                                ],
-                                "InheritedType": 7
-                              }
-                            ],
-                            "InheritedType": 1
-                          }
-                        ],
+                        "childs": [],
                         "nid": 1020,
                         "strtype": "SWITCH/Style_indicator",
                         "strval": "lv.PART.INDICATOR, Rectangle",
@@ -9526,6 +9553,82 @@
               }
             ],
             "InheritedType": 4
+          },
+          {
+            "disabled": false,
+            "nid": 1000711,
+            "strtype": "_event/EventHandler",
+            "strval": "GESTURE_DOWN(GESTURE)",
+            "childs": [
+              {
+                "nid": 1000712,
+                "strtype": "_event/name",
+                "strval": "swipeDown",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000713,
+                "strtype": "_event/condition_C",
+                "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000714,
+                "strtype": "_event/condition_P",
+                "strval": "",
+                "InheritedType": 10
+              },
+              {
+                "nid": 1000715,
+                "strtype": "_event/action",
+                "strval": "CHANGE SCREEN",
+                "childs": [
+                  {
+                    "nid": 1000716,
+                    "strtype": "CHANGE SCREEN/Name",
+                    "strval": "CHANGE SCREEN",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000717,
+                    "strtype": "CHANGE SCREEN/Call",
+                    "strval": "ChangeScreen( <{Screen_to}>, lv.SCR_LOAD_ANIM.<{Fade_mode}>, <{Speed}>, <{Delay}>)",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000718,
+                    "strtype": "CHANGE SCREEN/CallC",
+                    "strval": "_ui_screen_change( &<{Screen_to}>, LV_SCR_LOAD_ANIM_<{Fade_mode}>, <{Speed}>, <{Delay}>, &<{Screen_to}>_screen_init);",
+                    "InheritedType": 10
+                  },
+                  {
+                    "nid": 1000719,
+                    "strtype": "CHANGE SCREEN/Screen_to",
+                    "strval": "GUID20080795-477486S101342",
+                    "InheritedType": 9
+                  },
+                  {
+                    "nid": 1000720,
+                    "strtype": "CHANGE SCREEN/Fade_mode",
+                    "strval": "MOVE_BOTTOM",
+                    "InheritedType": 3
+                  },
+                  {
+                    "nid": 1000721,
+                    "strtype": "CHANGE SCREEN/Speed",
+                    "integer": 300,
+                    "InheritedType": 6
+                  },
+                  {
+                    "nid": 1000722,
+                    "strtype": "CHANGE SCREEN/Delay",
+                    "InheritedType": 6
+                  }
+                ],
+                "InheritedType": 10
+              }
+            ],
+            "InheritedType": 4
           }
         ],
         "saved_objtypeKey": "SCREEN"
@@ -9637,7 +9740,7 @@
     "uiExportFolderPath": "/Users/karl.pitrich/Development/ESPGrind/ESPGrind/src/ui",
     "projectExportFolderPath": "/Users/karl.pitrich/Development/ESPGrind",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 577,
+    "backup_cnt": 810,
     "autosave_cnt": 0,
     "lvgl_version": "9.1.0",
     "callfuncsexport": "C_FILE",
@@ -9653,7 +9756,7 @@
     "drive_fatfs_path": "",
     "naming": "Name",
     "naming_force_lowercase": false,
-    "nidcnt": 1000699,
+    "nidcnt": 1000779,
     "BitDepth": 16,
     "Name": "ESPGrind"
   }

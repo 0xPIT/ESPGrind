@@ -25,6 +25,18 @@
           255
         ],
         "InheritedType": 0
+      },
+      {
+        "nid": 1000778,
+        "strtype": "THEME_COLOR",
+        "strval": "DisabledBorder",
+        "intarray": [
+          117,
+          117,
+          117,
+          255
+        ],
+        "InheritedType": 0
       }
     ]
   },

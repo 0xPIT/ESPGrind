@@ -66,3 +66,7 @@ def editEnableChanged(event_struct):
 def onMainScreenLoaded(event_struct):
     return
 
+
+def onManualGrindPush(event_struct):
+    return
+
