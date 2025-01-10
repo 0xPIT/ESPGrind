@@ -25,9 +25,6 @@
 
 static const char *TAG = "UIE";
 
-// #define DEBUG 1
-// #include "debug.h"
-
 static bool initialized = false;
 
 static lv_timer_t *timer = NULL;
