@@ -5,6 +5,12 @@
 
 #pragma once
 
+#include "esp_timer.h"
+#include "esp_log.h"
+#include "stdio.h"
+#include "stdint.h"
+#include "lvgl.h"
+
 #ifdef DEBUG
 uint64_t last_event_print = 0;
 void printEvent(lv_event_t *e) {
@@ -51,5 +57,21 @@ void printEvent(lv_event_t *e) {
   }
 
   last_event_print = current_time;
+}
+
+
+inline bool debounceTouchEvent() {
+    static uint64_t last_touch_event_at = 0;
+    const uint64_t debounce_time = 10 * 1000; // ms
+    const uint64_t current_time = esp_timer_get_time();
+
+    if (last_touch_event_at > 0 && current_time - last_touch_event_at < debounce_time) {
+        printf("debounceTouchEvent: %lld\n", current_time - last_touch_event_at);
+        return true;
+    }
+    
+    last_touch_event_at = current_time;
+
+    return false;
 }
 #endif

@@ -16,7 +16,6 @@ lv_obj_t *ui_Main;
 lv_obj_t *ui_Header;
 void ui_event_Settings( lv_event_t * e);
 lv_obj_t *ui_Settings;
-void ui_event_SettingsLabel( lv_event_t * e);
 lv_obj_t *ui_SettingsLabel;
 void ui_event_GrindIII( lv_event_t * e);
 lv_obj_t *ui_GrindIII;
@@ -54,7 +53,6 @@ lv_obj_t *ui_SettingsMain;
 lv_obj_t *ui_HeaderSettings;
 void ui_event_SettingsExit( lv_event_t * e);
 lv_obj_t *ui_SettingsExit;
-void ui_event_SettingsExitLabel( lv_event_t * e);
 lv_obj_t *ui_SettingsExitLabel;
 void ui_event_SettingsHeadlineLabel( lv_event_t * e);
 lv_obj_t *ui_SettingsHeadlineLabel;
@@ -102,20 +100,16 @@ void ui_event_Main( lv_event_t * e) {
 if ( event_code == LV_EVENT_SCREEN_LOADED) {
       onMainScreenLoaded( e );
 }
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_TOP  ) {
+lv_indev_wait_release(lv_indev_active());
+      _ui_screen_change( &ui_SettingsMain, LV_SCR_LOAD_ANIM_MOVE_TOP, 300, 0, &ui_SettingsMain_screen_init);
+}
 }
 
 void ui_event_Settings( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_LONG_PRESSED) {
-      _ui_screen_change( &ui_SettingsMain, LV_SCR_LOAD_ANIM_MOVE_TOP, 250, 0, &ui_SettingsMain_screen_init);
-}
-}
-
-void ui_event_SettingsLabel( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-if ( event_code == LV_EVENT_LONG_PRESSED) {
+if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_SettingsMain, LV_SCR_LOAD_ANIM_MOVE_TOP, 250, 0, &ui_SettingsMain_screen_init);
 }
 }
@@ -123,7 +117,7 @@ if ( event_code == LV_EVENT_LONG_PRESSED) {
 void ui_event_GrindIII( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_SHORT_CLICKED) {
+if ( event_code == LV_EVENT_CLICKED) {
       onGrindClicked( e );
 }
 if ( event_code == LV_EVENT_FOCUSED) {
@@ -134,7 +128,7 @@ if ( event_code == LV_EVENT_FOCUSED) {
 void ui_event_GrindI( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_SHORT_CLICKED) {
+if ( event_code == LV_EVENT_CLICKED) {
       onGrindClicked( e );
 }
 if ( event_code == LV_EVENT_FOCUSED) {
@@ -151,12 +145,18 @@ if ( event_code == LV_EVENT_FOCUSED) {
 if ( event_code == LV_EVENT_CLICKED) {
       onGrindClicked( e );
 }
+if ( event_code == LV_EVENT_PRESSED) {
+      onManualGrindPush( e );
+}
+if ( event_code == LV_EVENT_RELEASED) {
+      onManualGrindPush( e );
+}
 }
 
 void ui_event_GrindII( lv_event_t * e) {
     lv_event_code_t event_code = lv_event_get_code(e);
 
-if ( event_code == LV_EVENT_SHORT_CLICKED) {
+if ( event_code == LV_EVENT_CLICKED) {
       onGrindClicked( e );
 }
 if ( event_code == LV_EVENT_FOCUSED) {
@@ -186,6 +186,10 @@ void ui_event_SettingsMain( lv_event_t * e) {
 if ( event_code == LV_EVENT_SCREEN_LOADED) {
       onSettingsScreenLoaded( e );
 }
+if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_BOTTOM  ) {
+lv_indev_wait_release(lv_indev_active());
+      _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_MOVE_BOTTOM, 300, 0, &ui_Main_screen_init);
+}
 }
 
 void ui_event_SettingsExit( lv_event_t * e) {
@@ -193,14 +197,6 @@ void ui_event_SettingsExit( lv_event_t * e) {
 
 if ( event_code == LV_EVENT_CLICKED) {
       _ui_screen_change( &ui_Main, LV_SCR_LOAD_ANIM_MOVE_BOTTOM, 250, 0, &ui_Main_screen_init);
-}
-}
-
-void ui_event_SettingsExitLabel( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-if ( event_code == LV_EVENT_LONG_PRESSED) {
-      _ui_screen_change( &ui_SettingsMain, LV_SCR_LOAD_ANIM_MOVE_TOP, 250, 0, &ui_SettingsMain_screen_init);
 }
 }
 

@@ -5,7 +5,10 @@
 #include <stdio.h>
 
 #include "esp_log.h"
-#include "bsp/esp-box.h"
+
+// #include "bsp/esp-box.h"
+#include "bsp/waveshare-esp32s3-touch2.8.bsp.h"
+
 #include "lvgl.h"
 #include "ui/ui.h"
 
@@ -86,10 +89,14 @@ void app_main(void)
 {
     nvs_init();
     settingsLoad();
-    
+
+    ESP_LOGI(TAG, "bsp_i2c_init");
     bsp_i2c_init();
+
+    ESP_LOGI(TAG, "bsp_display_start");
     bsp_display_start();
 
+    ESP_LOGI(TAG, "app_lvgl_display");
     app_lvgl_display();
 
     // xTaskCreatePinnedToCore(guiTask, "gui", 4096*2, NULL, 0, NULL, 1);

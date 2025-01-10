@@ -12,6 +12,7 @@ extern "C" {
 
 #define UI_THEME_COLOR_FOCUSSED 0
 #define UI_THEME_COLOR_RED 1
+#define UI_THEME_COLOR_DISABLEDBORDER 2
 
 #define UI_THEME_DEFAULT 0
 
@@ -20,6 +21,9 @@ extern const ui_theme_variable_t _ui_theme_alpha_Focussed[1];
 
 extern const ui_theme_variable_t _ui_theme_color_Red[1];
 extern const ui_theme_variable_t _ui_theme_alpha_Red[1];
+
+extern const ui_theme_variable_t _ui_theme_color_DisabledBorder[1];
+extern const ui_theme_variable_t _ui_theme_alpha_DisabledBorder[1];
 
 extern const uint32_t* ui_theme_colors[1];
 extern const uint8_t* ui_theme_alphas[1];

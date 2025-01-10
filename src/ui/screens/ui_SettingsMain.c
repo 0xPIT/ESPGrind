@@ -130,9 +130,8 @@ ui_EditEnable = lv_switch_create(ui_EditEnablePanel);
 lv_obj_set_width( ui_EditEnable, 50);
 lv_obj_set_height( ui_EditEnable, 25);
 lv_obj_set_align( ui_EditEnable, LV_ALIGN_CENTER );
+lv_obj_add_state( ui_EditEnable, LV_STATE_CHECKED );     /// States
 
-ui_object_set_themeable_style_property(ui_EditEnable, LV_PART_INDICATOR| LV_STATE_CHECKED, LV_STYLE_BG_COLOR, _ui_theme_color_Red);
-ui_object_set_themeable_style_property(ui_EditEnable, LV_PART_INDICATOR| LV_STATE_CHECKED, LV_STYLE_BG_OPA, _ui_theme_alpha_Red);
 
 ui_CounterContainer = lv_obj_create(ui_SettingsMain);
 lv_obj_remove_style_all(ui_CounterContainer);
@@ -235,7 +234,6 @@ lv_obj_set_height( ui_Counter4, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_align( ui_Counter4, LV_ALIGN_CENTER );
 lv_label_set_text(ui_Counter4,"111111");
 
-lv_obj_add_event_cb(ui_SettingsExitLabel, ui_event_SettingsExitLabel, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_SettingsExit, ui_event_SettingsExit, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_SettingsHeadlineLabel, ui_event_SettingsHeadlineLabel, LV_EVENT_ALL, NULL);
 lv_obj_add_event_cb(ui_BrightnessSlider, ui_event_BrightnessSlider, LV_EVENT_ALL, NULL);

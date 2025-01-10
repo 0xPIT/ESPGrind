@@ -62,7 +62,7 @@ static void settingsCheck(settings_t *param) {
 }
 
 static esp_err_t settingsSaveToNVS() {
-    ESP_LOGI(TAG, "saving settings to NVS");
+    ESP_LOGD(TAG, "saving settings to NVS");
     settingsCheck(&currentSettings);
     
     nvs_handle_t my_handle = { 0 };
@@ -132,7 +132,7 @@ esp_err_t settingsSave() {
 }
 
 static void saveSettingsCallback(void* arg) {
-    ESP_LOGI(TAG, "deferred saving settings");
+    ESP_LOGD(TAG, "deferred saving settings");
     settingsSave();
 }
 
@@ -183,7 +183,7 @@ esp_err_t settingsInit() {
         return ESP_FAIL;
     }
 
-    ESP_LOGI(TAG, "Settings task created");
+    ESP_LOGD(TAG, "Settings task created");
 
     settingsLoad();
 

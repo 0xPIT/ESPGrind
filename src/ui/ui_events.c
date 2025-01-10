@@ -12,12 +12,21 @@
 #include <string.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "esp_err.h"
+#include "esp_log.h"
 #include "lvgl.h"
-#include "bsp/esp-box.h"
+
+// #include "bsp/esp-box.h"
+#include "bsp/waveshare-esp32s3-touch2.8.bsp.h"
 
 #include "mill.h"
 #include "settings.h"
 #include "ui.h"
+
+static const char *TAG = "UIE";
+
+// #define DEBUG 1
+// #include "debug.h"
 
 static bool initialized = false;
 
@@ -30,13 +39,28 @@ static lv_obj_t *lastFocussed = NULL;
 lv_group_t *focusGroup = NULL;
 bool focusChange = false;
 
+#define grindButtonsCount (4)
 static lv_obj_t **getGrindButtons() {
-    static lv_obj_t *grindButtons[4];
+    static lv_obj_t *grindButtons[grindButtonsCount];
     grindButtons[0] = ui_GrindI;
     grindButtons[1] = ui_GrindII;
     grindButtons[2] = ui_GrindIII;
     grindButtons[3] = ui_GrindM;
     return grindButtons;
+}
+
+#define allButtonsCount (8)
+static lv_obj_t **getAllButtons() {
+    static lv_obj_t *allButtons[allButtonsCount];
+    allButtons[0] = ui_GrindI;
+    allButtons[1] = ui_GrindII;
+    allButtons[2] = ui_GrindIII;
+    allButtons[3] = ui_GrindM;
+    allButtons[4] = ui_Plus;
+    allButtons[5] = ui_Minus;
+    allButtons[6] = ui_Timer;
+    allButtons[7] = ui_Settings;
+    return allButtons;
 }
 
 void saveChangedTime() {
@@ -54,12 +78,34 @@ void saveChangedTime() {
 void countButtonEvent(lv_obj_t *button) {
     settings_t *settings = settingsGet();
     lv_obj_t **grindButtons = getGrindButtons();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < grindButtonsCount; i++) {
         if (grindButtons[i] == button) {
             settings->counters[i]++;
             settingsSaveDeferred();
             break;
         }
+    }
+}
+
+static void disableClickOnOtherThan(lv_obj_t *button) {
+    lv_obj_t **allButtons = getAllButtons();
+    for (int i = 0; i < allButtonsCount; i++) {
+        if (allButtons[i] == button) {
+            lv_obj_add_flag(allButtons[i], LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_remove_state(allButtons[i], LV_STATE_DISABLED);
+        }
+        else {
+            lv_obj_remove_flag(allButtons[i], LV_OBJ_FLAG_CLICKABLE);
+            lv_obj_set_state(allButtons[i], LV_STATE_DISABLED, true);
+        }
+    }
+}
+
+static void enableClickOnAll() {
+    lv_obj_t **allButtons = getAllButtons();
+    for (int i = 0; i < allButtonsCount; i++) {
+        lv_obj_add_flag(allButtons[i], LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_remove_state(allButtons[i], LV_STATE_DISABLED);
     }
 }
 
@@ -89,9 +135,18 @@ static void handleManualGrindTimer(void) {
         millOff();
         lv_timer_pause(timer);
         newValue = maxManualGrindTime;
+        enableClickOnAll();
     }
 
     updateTimerDisplay(newValue);
+}
+
+static void stopPresetGrinding(lv_obj_t *target) {
+    lv_timer_pause(timer);
+    millOff();
+    updateTimerDisplay(timerStartValue);
+    lv_arc_set_value(target, 100);
+    enableClickOnAll();
 }
 
 static void handlePresetGrindTimer(lv_obj_t *target) {
@@ -99,10 +154,7 @@ static void handlePresetGrindTimer(lv_obj_t *target) {
     int32_t newValue = currentValue - (timerStep / 10); // count down
 
     if (newValue < 0) {
-        lv_timer_pause(timer);
-        millOff();
-        updateTimerDisplay(timerStartValue);
-        lv_arc_set_value(target, 100);
+        stopPresetGrinding(target);
         return;
     }
 
@@ -125,11 +177,11 @@ static void onTimer(lv_timer_t *timer) {
 void onGrindFocussed(lv_event_t *e) {
     if (timerRunning()) return;
 
-    lv_obj_t **grindButtons = getGrindButtons();
     lv_obj_t *ui_Element = lv_event_get_current_target(e);
+    lv_obj_t **grindButtons = getGrindButtons();
     settings_t *settings = settingsGet();
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < grindButtonsCount; i++) {
         if (grindButtons[i] == ui_Element) {
             updateTimerDisplay(settings->timer_defaults[i]);
 
@@ -150,15 +202,68 @@ void onGrindFocussed(lv_event_t *e) {
     }
 }
 
-void onGrindClicked(lv_event_t *e) {
-    lv_obj_t *clickedGrindButton = lv_event_get_current_target(e);
-    bool isManualGrind = clickedGrindButton == ui_GrindM;
+static void ensureTimer() {
+    if (!timer) {
+        timer = lv_timer_create(onTimer, timerStep, NULL);
+        lv_timer_set_period(timer, timerStep);
+        lv_timer_pause(timer);
+    }
+}
 
-    if (timerRunning()) {
-        if (isManualGrind && millIsMilling()) {
+static void startMillFromButton(lv_obj_t *button) {
+    if (!timer) {
+        ESP_LOGE(TAG, "timer not initialized");
+        return;
+    }
+
+    disableClickOnOtherThan(button);
+    lv_timer_reset(timer);
+    lv_timer_resume(timer);
+    millOn();
+    countButtonEvent(button);
+}
+
+void onManualGrindPush(lv_event_t *e) {
+    lv_obj_t *clickedGrindButton = lv_event_get_current_target(e);
+    lv_event_code_t currentEvent = lv_event_get_code(e);
+
+    if (lastFocussed != clickedGrindButton) {
+        focusChange = false;
+        return;
+    }
+
+    ensureTimer();
+
+    if (currentEvent == LV_EVENT_RELEASED) {
+        if (timerRunning()) {
             millOff();
             lv_timer_pause(timer);
+            enableClickOnAll();
         }
+        return;
+    }
+
+    if (currentEvent == LV_EVENT_PRESSED && !timerRunning()) {
+        updateTimerDisplay(0); // M starts at 0 every time
+        lv_arc_set_value(clickedGrindButton, 100);
+        lv_timer_set_user_data(timer, lv_event_get_current_target(e));
+        timerStartValue = 0;
+        lv_timer_set_repeat_count(timer, maxManualGrindTime * (timerStep / 10)); 
+        startMillFromButton(clickedGrindButton);
+    }
+}
+
+void onGrindClicked(lv_event_t *e) {
+    lv_obj_t *clickedGrindButton = lv_event_get_current_target(e);
+
+    bool isManualGrind = clickedGrindButton == ui_GrindM;
+    if (isManualGrind) {
+        // click event seems reqired to allow focus, but event ignored.
+        return;
+    }
+
+    if (timerRunning()) {
+        stopPresetGrinding(clickedGrindButton);
         return;
     }
 
@@ -167,28 +272,14 @@ void onGrindClicked(lv_event_t *e) {
         return;
     }
 
-    if (!timer) {
-        timer = lv_timer_create(onTimer, timerStep, NULL);
-        lv_timer_pause(timer);
-    }
+    ensureTimer();
 
     lv_arc_set_value(clickedGrindButton, 100);
     lv_timer_set_user_data(timer, clickedGrindButton);
-    lv_timer_set_period(timer, timerStep);
+    timerStartValue = lv_spinbox_get_value(ui_Timer);
+    lv_timer_set_repeat_count(timer, timerStartValue * (timerStep / 10));
 
-    if (isManualGrind) {
-        timerStartValue = 0;
-        lv_timer_set_repeat_count(timer, maxManualGrindTime * (timerStep / 10));
-    } 
-    else {
-        timerStartValue = lv_spinbox_get_value(ui_Timer);
-        lv_timer_set_repeat_count(timer, timerStartValue * (timerStep / 10));
-    }
-
-    lv_timer_reset(timer);
-    lv_timer_resume(timer);
-    millOn();
-    countButtonEvent(clickedGrindButton);
+    startMillFromButton(clickedGrindButton);
 }
 
 void editModeEnable() {
@@ -243,7 +334,7 @@ void onMainScreenLoaded(lv_event_t *e) {
 void createButtonFocusGroup() {
     focusGroup = lv_group_create();
     lv_obj_t **grindButtons = getGrindButtons();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < grindButtonsCount; i++) {
         lv_group_add_obj(focusGroup, grindButtons[i]);
     }
 }
@@ -259,7 +350,7 @@ void ui_InitialActions(lv_event_t *e) {
 
     bsp_display_brightness_set(settings->brightness);
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < grindButtonsCount; i++) {
         if (i == settings->last_focussed) {
             lastFocussed = grindButtons[settings->last_focussed];
             lv_group_focus_obj(lastFocussed);

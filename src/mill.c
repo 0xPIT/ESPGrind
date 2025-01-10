@@ -17,7 +17,8 @@ typedef struct {
 } mill_state_t;
 
 static const mill_config_t MillConfig = {
-    .relais_pin = GPIO_NUM_14,
+    // .relais_pin = GPIO_NUM_14, // convenient for LED on ESP_BOX
+    .relais_pin = GPIO_NUM_15,    // Waveshare 2.8 Touch
     .on_level = 1
 };
 

@@ -10,6 +10,9 @@ const ui_theme_variable_t _ui_theme_alpha_Focussed[1] = {255};
 
 const ui_theme_variable_t _ui_theme_color_Red[1] = {0xAA0000};
 const ui_theme_variable_t _ui_theme_alpha_Red[1] = {255};
+
+const ui_theme_variable_t _ui_theme_color_DisabledBorder[1] = {0x757575};
+const ui_theme_variable_t _ui_theme_alpha_DisabledBorder[1] = {255};
 uint8_t ui_theme_idx = UI_THEME_DEFAULT;
 
 void ui_theme_set(uint8_t theme_idx)
