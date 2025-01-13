@@ -298,6 +298,8 @@ void onBrightnessChanged(lv_event_t *e) {
     settings_t *settings = settingsGet();
     settings->brightness = lv_slider_get_value(ui_BrightnessSlider);
     bsp_display_brightness_set(settings->brightness);
+    setDefaultBrightness(settings->brightness);
+
     settingsSaveDeferred();
 }
 

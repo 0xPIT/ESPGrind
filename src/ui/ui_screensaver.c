@@ -6,7 +6,7 @@
 
 extern lv_obj_t **getAllButtons();
 static lv_timer_t *screenSaverTimer = NULL;
-static const uint32_t screenSaverTimeout = 1; // 10 minutes
+static const uint32_t screenSaverTimeout = 10; // in minutes
 static uint8_t normalBrightness = 0;
 static bool screenSaverActive = false;
 
