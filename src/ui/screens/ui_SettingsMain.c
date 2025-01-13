@@ -154,7 +154,7 @@ lv_obj_set_align( ui_Label3, LV_ALIGN_CENTER );
 lv_label_set_text(ui_Label3,"Screensaver");
 
 ui_ScreensaverTimeout = lv_roller_create(ui_ScreensaverSettingsPanel);
-lv_roller_set_options( ui_ScreensaverTimeout, "Off\n5min\n15min\n30min\n60min", LV_ROLLER_MODE_NORMAL );
+lv_roller_set_options( ui_ScreensaverTimeout, "Off\n5min\n15min\n30min\n60min", LV_ROLLER_MODE_INFINITE );
 lv_obj_set_height( ui_ScreensaverTimeout, 100);
 lv_obj_set_width( ui_ScreensaverTimeout, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_align( ui_ScreensaverTimeout, LV_ALIGN_CENTER );

@@ -7859,7 +7859,7 @@
                       {
                         "nid": 1030,
                         "strtype": "ROLLER/Mode",
-                        "strval": "NORMAL",
+                        "strval": "INFINITE",
                         "InheritedType": 3
                       },
                       {
@@ -8010,8 +8010,7 @@
                     "InheritedType": 11
                   }
                 ],
-                "saved_objtypeKey": "PANEL",
-                "tree_closed": true
+                "saved_objtypeKey": "PANEL"
               }
             ],
             "dont_export": false,
@@ -10552,7 +10551,7 @@
     "uiExportFolderPath": "/Users/karl.pitrich/Development/ESPGrind/source/src/ui",
     "projectExportFolderPath": "/Users/karl.pitrich/Development/ESPGrind",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 1354,
+    "backup_cnt": 1357,
     "autosave_cnt": 0,
     "lvgl_version": "9.1.0",
     "callfuncsexport": "C_FILE",
