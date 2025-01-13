@@ -34,7 +34,8 @@ static const settings_t defaultSettings = {
     .counters =       {   0,   0,   0, 0 },
 
     .last_focussed = -1, // resume where left off
-    .brightness = 50
+    .brightness = 50,
+    .screensaverTimeout = 0
 };
 
 static void settingsCheck(settings_t *param) {
@@ -51,6 +52,10 @@ static void settingsCheck(settings_t *param) {
     }
 
     if (param->brightness < 1 || param->brightness > 100) {
+        restore = true;
+    }
+
+    if (param->screensaverTimeout < 0 || param->screensaverTimeout > 5) {
         restore = true;
     }
 

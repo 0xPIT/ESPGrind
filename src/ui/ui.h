@@ -72,6 +72,9 @@ extern lv_obj_t *ui_EditEnablePanel;
 extern lv_obj_t *ui_Label2;
 void ui_event_EditEnable( lv_event_t * e);
 extern lv_obj_t *ui_EditEnable;
+extern lv_obj_t *ui_ScreensaverSettingsPanel;
+extern lv_obj_t *ui_Label3;
+extern lv_obj_t *ui_ScreensaverTimeout;
 extern lv_obj_t *ui_CounterContainer;
 extern lv_obj_t *ui_CounterPanel1;
 extern lv_obj_t *ui_CounterLabel1;
@@ -89,9 +92,7 @@ extern lv_obj_t *ui_Counter4;
 
 // SCREEN: ui_ScreenSaver
 void ui_ScreenSaver_screen_init(void);
-void ui_event_ScreenSaver( lv_event_t * e);
 extern lv_obj_t *ui_ScreenSaver;
-void ui_event_standbyLabel( lv_event_t * e);
 extern lv_obj_t *ui_standbyLabel;
 extern lv_obj_t *ui_standbyInfoLabel;
 // CUSTOM VARIABLES

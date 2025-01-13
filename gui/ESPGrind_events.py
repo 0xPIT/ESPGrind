@@ -82,3 +82,11 @@ def onRetriggerDimmer(event_struct):
 def retonRetriggerDimmer(event_struct):
     return
 
+
+def retriggerScreensaver(event_struct):
+    return
+
+
+def onScreensaverTimeoutChanged(event_struct):
+    return
+

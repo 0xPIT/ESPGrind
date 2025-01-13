@@ -17,7 +17,7 @@
     "force_export_images": false,
     "flat_export": false,
     "advanced_alpha": false,
-    "pointfilter": false,
+    "pointfilter": true,
     "theme_simplified": false,
     "theme_dark": true,
     "theme_color1": 5,
@@ -25,7 +25,7 @@
     "uiExportFolderPath": "/Users/karl.pitrich/Development/ESPGrind/source/src/ui",
     "projectExportFolderPath": "/Users/karl.pitrich/Development/ESPGrind",
     "custom_variable_prefix": "uic",
-    "backup_cnt": 1321,
+    "backup_cnt": 1347,
     "autosave_cnt": 0,
     "lvgl_version": "9.1.0",
     "callfuncsexport": "C_FILE",
@@ -41,5 +41,5 @@
     "drive_fatfs_path": "",
     "naming": "Name",
     "naming_force_lowercase": false,
-    "nidcnt": 1000809
+    "nidcnt": 1000819
 }

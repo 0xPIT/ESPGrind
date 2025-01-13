@@ -298,8 +298,6 @@ void onBrightnessChanged(lv_event_t *e) {
     settings_t *settings = settingsGet();
     settings->brightness = lv_slider_get_value(ui_BrightnessSlider);
     bsp_display_brightness_set(settings->brightness);
-    setDefaultBrightness(settings->brightness);
-
     settingsSaveDeferred();
 }
 
@@ -309,6 +307,7 @@ void onSettingsScreenLoaded(lv_event_t *e) {
 
     settings_t *settings = settingsGet();
     lv_slider_set_value(ui_BrightnessSlider, settings->brightness, LV_ANIM_OFF);
+    lv_roller_set_selected(ui_ScreensaverTimeout, settings->screensaverTimeout, LV_ANIM_OFF);
 
 
     lv_obj_t *grindCounters[4] = {ui_Counter1, ui_Counter2, ui_Counter3, ui_Counter4};
@@ -320,7 +319,6 @@ void onSettingsScreenLoaded(lv_event_t *e) {
 void onMainScreenLoaded(lv_event_t *e) {
     // update gui with elements not available in squareline studio
     lv_label_set_text(ui_SettingsLabel, LV_SYMBOL_SETTINGS);
-
     editEnableChanged(NULL);
 }
 
@@ -332,11 +330,24 @@ void createButtonFocusGroup() {
     }
 }
 
+
+void onScreensaverTimeoutchanged(lv_event_t *e) {
+    uint16_t timeoutIdx = lv_roller_get_selected(ui_ScreensaverTimeout);
+    if (timeoutIdx < 5) {
+        settings_t *settings = settingsGet();
+        settings->screensaverTimeout = timeoutIdx;
+        settingsSaveDeferred();
+        setupScreenSaver();
+    }
+}
+
 void ui_InitialActions(lv_event_t *e) {
     millInit();
     settingsInit();
     editModeDisable();
     setupScreenSaver();
+
+    lv_obj_add_event_cb(ui_ScreensaverTimeout, onScreensaverTimeoutchanged, LV_EVENT_VALUE_CHANGED, NULL);
 
     createButtonFocusGroup();
 
@@ -344,7 +355,6 @@ void ui_InitialActions(lv_event_t *e) {
     settings_t *settings = settingsGet();
 
     bsp_display_brightness_set(settings->brightness);
-    setDefaultBrightness(settings->brightness);
 
     for (int i = 0; i < grindButtonsCount; i++) {
         if (i == settings->last_focussed) {
@@ -356,19 +366,4 @@ void ui_InitialActions(lv_event_t *e) {
     }
 
     initialized = true;
-}
-
-void onAnyClick(lv_event_t * e)
-{
-	// Your code here
-}
-
-void onRetriggerDimmer(lv_event_t * e)
-{
-	// Your code here
-}
-
-void retriggerScreensaver(lv_event_t * e)
-{
-	// Your code here
 }

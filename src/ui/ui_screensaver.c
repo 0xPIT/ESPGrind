@@ -3,17 +3,18 @@
 #include "ui.h"
 #include "bsp/waveshare-esp32s3-touch2.8.bsp.h"
 #include "settings.h"
+#include "esp_log.h"
 
 extern lv_obj_t **getAllButtons();
 static lv_timer_t *screenSaverTimer = NULL;
-static const uint32_t screenSaverTimeout = 10; // in minutes
-static uint8_t normalBrightness = 0;
 static bool screenSaverActive = false;
+static const char *TAG = "SSAVER";
 
 void retriggerScreenSaver(lv_event_t *e) {
     if (screenSaverActive) {
+        settings_t *settings = settingsGet();
         _ui_screen_change(&ui_Main, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_Main_screen_init);
-        bsp_display_brightness_set(normalBrightness); // restore normal brightness
+        bsp_display_brightness_set(settings->brightness); // restore normal brightness
         screenSaverActive = false;
     }
     
@@ -23,23 +24,28 @@ void retriggerScreenSaver(lv_event_t *e) {
     }
 }
 
-static void onscreenSaverTimer(lv_timer_t *timer) {
+static void onScreenSaverTimer(lv_timer_t *timer) {
     if (!screenSaverActive) {
         _ui_screen_change(&ui_ScreenSaver, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ScreenSaver_screen_init);
-        settings_t *settings = settingsGet();
-        normalBrightness = settings->brightness;
-        bsp_display_brightness_set(normalBrightness / 20); // dim to 20% of normal brightness
+        bsp_display_brightness_set(8); // dim to some arbitrary 8%
         screenSaverActive = true;
+        if (screenSaverTimer) {
+           lv_timer_pause(screenSaverTimer);
+        }
     }
 }
 
-void setDefaultBrightness(uint32_t level) {
-    normalBrightness = level;
-}
-
 void setupScreenSaver() {
-    screenSaverTimer = lv_timer_create(onscreenSaverTimer, screenSaverTimeout * 60 * 1000, NULL);
-    lv_timer_reset(screenSaverTimer);
+    const uint16_t screensaverTimeoutsIndexToMinutes[5] = { 0, 5, 15, 30, 60 };
+    settings_t *settings = settingsGet();
+
+    if (settings->screensaverTimeout == 0) {
+        ESP_LOGI(TAG, "screensaver timeout is 0, not setting up screen saver\n");
+        if (screenSaverTimer) {
+            lv_timer_pause(screenSaverTimer);
+        }
+        return;
+    }
 
     lv_obj_add_event_cb(ui_ScreenSaver, retriggerScreenSaver, LV_EVENT_CLICKED, NULL);
     lv_obj_add_event_cb(ui_standbyLabel, retriggerScreenSaver, LV_EVENT_CLICKED, NULL);
@@ -50,4 +56,11 @@ void setupScreenSaver() {
     for (int i = 0; i < allButtonsCount; i++) {
         lv_obj_add_event_cb(allButtons[i], retriggerScreenSaver, LV_EVENT_CLICKED, NULL);
     }
-} 
+
+    ESP_LOGI(TAG, "setting up screen saver timer for %d minutes\n", screensaverTimeoutsIndexToMinutes[settings->screensaverTimeout]);
+    if (screenSaverTimer == NULL) {
+        screenSaverTimer = lv_timer_create(onScreenSaverTimer, screensaverTimeoutsIndexToMinutes[settings->screensaverTimeout] * 60 * 1000, NULL);
+    }
+    lv_timer_reset(screenSaverTimer);
+    lv_timer_resume(screenSaverTimer);
+}

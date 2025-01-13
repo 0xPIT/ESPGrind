@@ -102,5 +102,9 @@ void app_main(void)
     // xTaskCreatePinnedToCore(guiTask, "gui", 4096*2, NULL, 0, NULL, 1);
 
     ESP_LOGI(TAG, "initialization done.");
+
+    while (1) {
+        vTaskDelay(1000);
+    }
 }
 

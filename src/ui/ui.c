@@ -65,6 +65,9 @@ lv_obj_t *ui_EditEnablePanel;
 lv_obj_t *ui_Label2;
 void ui_event_EditEnable( lv_event_t * e);
 lv_obj_t *ui_EditEnable;
+lv_obj_t *ui_ScreensaverSettingsPanel;
+lv_obj_t *ui_Label3;
+lv_obj_t *ui_ScreensaverTimeout;
 lv_obj_t *ui_CounterContainer;
 lv_obj_t *ui_CounterPanel1;
 lv_obj_t *ui_CounterLabel1;
@@ -83,9 +86,7 @@ lv_obj_t *ui_Counter4;
 
 // SCREEN: ui_ScreenSaver
 void ui_ScreenSaver_screen_init(void);
-void ui_event_ScreenSaver( lv_event_t * e);
 lv_obj_t *ui_ScreenSaver;
-void ui_event_standbyLabel( lv_event_t * e);
 lv_obj_t *ui_standbyLabel;
 lv_obj_t *ui_standbyInfoLabel;
 // CUSTOM VARIABLES
@@ -113,9 +114,6 @@ if ( event_code == LV_EVENT_SCREEN_LOADED) {
 if ( event_code == LV_EVENT_GESTURE &&  lv_indev_get_gesture_dir(lv_indev_active()) == LV_DIR_TOP  ) {
 lv_indev_wait_release(lv_indev_active());
       _ui_screen_change( &ui_SettingsMain, LV_SCR_LOAD_ANIM_MOVE_TOP, 300, 0, &ui_SettingsMain_screen_init);
-}
-if ( event_code == LV_EVENT_CLICKED) {
-      onAnyClick( e );
 }
 }
 
@@ -234,22 +232,6 @@ void ui_event_EditEnable( lv_event_t * e) {
 
 if ( event_code == LV_EVENT_VALUE_CHANGED) {
       editEnableChanged( e );
-}
-}
-
-void ui_event_ScreenSaver( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-if ( event_code == LV_EVENT_CLICKED) {
-      retriggerScreensaver( e );
-}
-}
-
-void ui_event_standbyLabel( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-if ( event_code == LV_EVENT_CLICKED) {
-      retriggerScreensaver( e );
 }
 }
 

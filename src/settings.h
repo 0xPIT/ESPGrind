@@ -13,6 +13,7 @@ typedef struct {
     int32_t counters[4];
     int8_t last_focussed;
     int32_t brightness;
+    int16_t screensaverTimeout;
 } settings_t;
 
 esp_err_t settingsLoad(void);
