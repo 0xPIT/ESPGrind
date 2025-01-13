@@ -4,14 +4,9 @@
 #include "sdkconfig.h"
 #include "driver/gpio.h"
 #include "driver/i2c.h"
+#include "driver/i2s_std.h"
 #include "lvgl.h"
 #include "esp_lvgl_port.h"
-
-#if ESP_IDF_VERSION < ESP_IDF_VERSION_VAL(5, 0, 0)
-#include "driver/i2s.h"
-#else
-#include "driver/i2s_std.h"
-#endif
 
 /**************************************************************************************************
  *  BSP Capabilities
@@ -19,12 +14,13 @@
 
 #define BSP_CAPS_DISPLAY        1
 #define BSP_CAPS_TOUCH          1
-// #define BSP_CAPS_SDCARD         0
+// #define BSP_CAPS_SDCARD         1
 // #define BSP_CAPS_IMU            1
 // #define BSP_CAPS_AUDIO          1
 // #define BSP_CAPS_AUDIO_SPEAKER  1
 // #define BSP_CAPS_AUDIO_MIC      1
 // #define BSP_CAPS_BUTTONS        1
+
 /**************************************************************************************************/
 
 // pinout 
@@ -59,6 +55,8 @@
 #define ESP_LCD_COLOR_FORMAT_RGB888    (2)
 #define BSP_LCD_COLOR_FORMAT        (ESP_LCD_COLOR_FORMAT_RGB565)
 #define BSP_LCD_COLOR_SPACE         (ESP_LCD_COLOR_SPACE_BGR)
+
+#define BSP_LCD_DRAW_BUF_HEIGHT 100
 
 #define BSP_LCD_PIXEL_CLOCK_HZ      (80 * 1000 * 1000)
 #define BSP_LCD_BIGENDIAN           (0)

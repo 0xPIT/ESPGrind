@@ -2,11 +2,6 @@
 // Espresso mill controller
 // (c) 2025 karl@pitrich.com
 //
-// Bugs:
-// 1. the manual grund button does not behave corectly: 
-//    1a. hold mode: it seems to depend on where you put your finger, probably some even proparation issue?
-//    2b. toggle mode: when the timer runs, the next click to turn it off never arrives (no events arrive)
-//
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -16,12 +11,13 @@
 #include "esp_log.h"
 #include "lvgl.h"
 
-// #include "bsp/esp-box.h"
 #include "bsp/waveshare-esp32s3-touch2.8.bsp.h"
 
 #include "mill.h"
 #include "settings.h"
 #include "ui.h"
+#include "../common.h"
+#include "ui_screensaver.h"
 
 static const char *TAG = "UIE";
 
@@ -36,7 +32,6 @@ static lv_obj_t *lastFocussed = NULL;
 lv_group_t *focusGroup = NULL;
 bool focusChange = false;
 
-#define grindButtonsCount (4)
 static lv_obj_t **getGrindButtons() {
     static lv_obj_t *grindButtons[grindButtonsCount];
     grindButtons[0] = ui_GrindI;
@@ -46,8 +41,7 @@ static lv_obj_t **getGrindButtons() {
     return grindButtons;
 }
 
-#define allButtonsCount (8)
-static lv_obj_t **getAllButtons() {
+lv_obj_t **getAllButtons() {
     static lv_obj_t *allButtons[allButtonsCount];
     allButtons[0] = ui_GrindI;
     allButtons[1] = ui_GrindII;
@@ -340,12 +334,15 @@ void ui_InitialActions(lv_event_t *e) {
     millInit();
     settingsInit();
     editModeDisable();
+    setupScreenSaver();
+
     createButtonFocusGroup();
 
     lv_obj_t **grindButtons = getGrindButtons();
     settings_t *settings = settingsGet();
 
     bsp_display_brightness_set(settings->brightness);
+    setDefaultBrightness(settings->brightness);
 
     for (int i = 0; i < grindButtonsCount; i++) {
         if (i == settings->last_focussed) {
@@ -357,4 +354,19 @@ void ui_InitialActions(lv_event_t *e) {
     }
 
     initialized = true;
+}
+
+void onAnyClick(lv_event_t * e)
+{
+	// Your code here
+}
+
+void onRetriggerDimmer(lv_event_t * e)
+{
+	// Your code here
+}
+
+void retriggerScreensaver(lv_event_t * e)
+{
+	// Your code here
 }

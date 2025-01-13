@@ -87,6 +87,15 @@ extern lv_obj_t *ui_CounterLabel4;
 extern lv_obj_t *ui_Counter4;
 // CUSTOM VARIABLES
 
+// SCREEN: ui_ScreenSaver
+void ui_ScreenSaver_screen_init(void);
+void ui_event_ScreenSaver( lv_event_t * e);
+extern lv_obj_t *ui_ScreenSaver;
+void ui_event_standbyLabel( lv_event_t * e);
+extern lv_obj_t *ui_standbyLabel;
+extern lv_obj_t *ui_standbyInfoLabel;
+// CUSTOM VARIABLES
+
 // EVENTS
 void ui_event____initial_actions0( lv_event_t * e);
 extern lv_obj_t *ui____initial_actions0;

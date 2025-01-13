@@ -1,5 +1,6 @@
 screens/ui_Main.c
 screens/ui_SettingsMain.c
+screens/ui_ScreenSaver.c
 ui_theme_manager.c
 ui_themes.c
 ui.c

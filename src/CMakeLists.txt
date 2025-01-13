@@ -1,6 +1,5 @@
 
 file(GLOB_RECURSE SRC_UI ${CMAKE_SOURCE_DIR} "ui/*.c")
-
 file(GLOB_RECURSE SRC_BSP ${CMAKE_SOURCE_DIR} "bsp/*.c")
 
 idf_component_register(SRCS 

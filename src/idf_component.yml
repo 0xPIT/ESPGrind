@@ -1,6 +1,9 @@
-description: ESP-BSP SquareLine LVGL Example
+description: ESPGrind
+
 targets:
     - esp32s3
+
 dependencies:
-  idf: ">=4.4"
-  esp-box: "*"
+  idf: '>=5'
+  espressif/esp_lcd_touch: '^1.1'
+  espressif/esp_lvgl_port: '^2.0'

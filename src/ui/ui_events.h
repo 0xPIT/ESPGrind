@@ -10,8 +10,10 @@
 extern "C" {
 #endif
 
+
 void ui_InitialActions(lv_event_t * e);
 void onMainScreenLoaded(lv_event_t * e);
+void onAnyClick(lv_event_t * e);
 void onGrindClicked(lv_event_t * e);
 void onGrindFocussed(lv_event_t * e);
 void onManualGrindPush(lv_event_t * e);
@@ -20,6 +22,7 @@ void onIncreaseTime1(lv_event_t * e);
 void onSettingsScreenLoaded(lv_event_t * e);
 void onBrightnessChanged(lv_event_t * e);
 void editEnableChanged(lv_event_t * e);
+void retriggerScreensaver(lv_event_t * e);
 
 #ifdef __cplusplus
 } /*extern "C"*/

@@ -70,3 +70,15 @@ def onMainScreenLoaded(event_struct):
 def onManualGrindPush(event_struct):
     return
 
+
+def onAnyClick(event_struct):
+    return
+
+
+def onRetriggerDimmer(event_struct):
+    return
+
+
+def retonRetriggerDimmer(event_struct):
+    return
+
