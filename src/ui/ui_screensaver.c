@@ -5,10 +5,12 @@
 #include "settings.h"
 #include "esp_log.h"
 
+static const char *TAG = "SSAVER";
+
 extern lv_obj_t **getAllButtons();
 static lv_timer_t *screenSaverTimer = NULL;
 static bool screenSaverActive = false;
-static const char *TAG = "SSAVER";
+static const int16_t dimBrightness = 8; // dim down to some arbitrary 8%
 
 void retriggerScreenSaver(lv_event_t *e) {
     if (screenSaverActive) {
@@ -27,7 +29,7 @@ void retriggerScreenSaver(lv_event_t *e) {
 static void onScreenSaverTimer(lv_timer_t *timer) {
     if (!screenSaverActive) {
         _ui_screen_change(&ui_ScreenSaver, LV_SCR_LOAD_ANIM_NONE, 0, 0, &ui_ScreenSaver_screen_init);
-        bsp_display_brightness_set(8); // dim to some arbitrary 8%
+        bsp_display_brightness_set(dimBrightness);
         screenSaverActive = true;
         if (screenSaverTimer) {
            lv_timer_pause(screenSaverTimer);
