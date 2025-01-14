@@ -29,23 +29,23 @@ extern "C" {
 
 #define ESP_LCD_TOUCH_CST328_TOUCHREPORT        (0xD000)
 #define ESP_LCD_TOUCH_CST328_READ_FINGER_REG    (0xD005)
-#define ESP_LCD_TOUCH_CST328_READ_CHECK_REG     (0xD006) // fixed value 0xAB
 
+#define ESP_LCD_TOUCH_CST328_READ_CHECK_REG     (0xD006) // fixed value 0xAB
 #define ESP_LCD_TOUCH_CST328_CHECK_BYTE           (0xAB)
 
 typedef struct {
     uint8_t status : 4;   // Low 4 bits -> Status
     uint8_t id : 4;       // High 4 bits -> ID
-    uint8_t x_hi;               // High 8 bits of X resolution
-    uint8_t y_hi;               // High 8 bits of Y resolution
-    uint8_t y_lo : 4;    // Low 4 bits of Y resolution
-    uint8_t x_lo : 4;    // Low 4 bits of X resolution
-    uint8_t pressure;            // Pressure
+    uint8_t x_hi;         // High 8 bits of X resolution
+    uint8_t y_hi;         // High 8 bits of Y resolution
+    uint8_t y_lo : 4;     // Low 4 bits of Y resolution
+    uint8_t x_lo : 4;     // Low 4 bits of X resolution
+    uint8_t pressure;     // Finger pressure
 } __attribute__((packed)) touch_finger_t;
 
 typedef struct {
     touch_finger_t finger1;   // Data for the 1st finger
-    uint8_t key_report_flag;  // 0xD005: Key report flag -> & with 0x7F to get the number of fingers currently touched
+    uint8_t key_report_flag;  // 0xD005: Key report flag -> & with 0x7F to get the number of fingers currently touching
     uint8_t check_value;      // 0xD006: Fixed value (0xAB)
 #if CONFIG_ESP_LCD_TOUCH_MAX_POINTS > 1
     touch_finger_t fingers[CONFIG_ESP_LCD_TOUCH_MAX_POINTS - 1];

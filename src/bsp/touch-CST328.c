@@ -58,7 +58,7 @@ esp_err_t esp_lcd_touch_new_i2c_cst328(const esp_lcd_panel_io_handle_t io, const
         ret = gpio_config(&int_gpio_config);
         ESP_GOTO_ON_ERROR(ret, err, TAG, "GPIO config failed");
         
-        // Register interrupt callback
+        // register interrupt callback
         if (esp_lcd_touch_cst328->config.interrupt_callback) {
             esp_lcd_touch_register_interrupt_callback(esp_lcd_touch_cst328, esp_lcd_touch_cst328->config.interrupt_callback);
         }
@@ -113,11 +113,20 @@ static esp_err_t esp_lcd_touch_cst328_read_data(esp_lcd_touch_handle_t tp)
     taskENTER_CRITICAL(&tp->data.lock);
         tp->data.points = points;
         for (uint8_t i = 0; i < points; i++) {
-            tp->data.coords[i].x = (report->finger1.x_hi << 4) | report->finger1.x_lo;
-            tp->data.coords[i].y = (report->finger1.y_hi << 4) | report->finger1.y_lo;
-            tp->data.coords[i].strength = report->finger1.pressure;
-            // tp->data.coords[i].strength = report->finger1.status & 0x04;
-        }
+            touch_finger_t *finger = &report->finger1;
+            if (i == 0) {
+                finger = &report->finger1;
+            } 
+            #if CONFIG_ESP_LCD_TOUCH_MAX_POINTS > 1
+            else {
+                finger = &report->fingers[i-1];
+            }
+            #endif
+
+            tp->data.coords[i].x = (finger->x_hi << 4) | finger->x_lo;
+            tp->data.coords[i].y = (finger->y_hi << 4) | finger->y_lo;
+            tp->data.coords[i].strength = finger->pressure;
+        }   
     taskEXIT_CRITICAL(&tp->data.lock);
 
     // ------------------------------------------------------------------------------------------------------------------------------
@@ -147,8 +156,9 @@ static bool esp_lcd_touch_cst328_get_xy(esp_lcd_touch_handle_t tp, uint16_t *x, 
     assert(max_point_num > 0);
 
     taskENTER_CRITICAL(&tp->data.lock);
-        if(tp->data.points > max_point_num)
+        if (tp->data.points > max_point_num) {
             tp->data.points = max_point_num;
+        }
 
         for (uint8_t i = 0; i < tp->data.points; i++) {
             x[i] = tp->data.coords[i].x;

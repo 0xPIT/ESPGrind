@@ -8,6 +8,7 @@
 static const char *TAG = "SSAVER";
 
 extern lv_obj_t **getAllButtons();
+
 static lv_timer_t *screenSaverTimer = NULL;
 static bool screenSaverActive = false;
 static const int16_t dimBrightness = 8; // dim down to some arbitrary 8%

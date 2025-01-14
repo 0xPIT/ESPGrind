@@ -111,7 +111,6 @@ esp_err_t esp_lcd_new_panel_st7789t(const esp_lcd_panel_io_handle_t io, const es
     st7789t->base.disp_on_off = panel_st7789t_disp_on_off;
     *ret_panel = &(st7789t->base);
     ESP_LOGD(TAG, "new st7789t panel @%p", st7789t);
-    // printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\r\n");
     return ESP_OK;
 
 err:

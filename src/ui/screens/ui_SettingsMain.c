@@ -159,6 +159,28 @@ lv_obj_set_height( ui_ScreensaverTimeout, 100);
 lv_obj_set_width( ui_ScreensaverTimeout, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_align( ui_ScreensaverTimeout, LV_ALIGN_CENTER );
 
+ui_VersionPanel = lv_obj_create(ui_SettingsContents);
+lv_obj_set_height( ui_VersionPanel, 35);
+lv_obj_set_width( ui_VersionPanel, lv_pct(100));
+lv_obj_set_align( ui_VersionPanel, LV_ALIGN_CENTER );
+lv_obj_set_flex_flow(ui_VersionPanel,LV_FLEX_FLOW_ROW);
+lv_obj_set_flex_align(ui_VersionPanel, LV_FLEX_ALIGN_SPACE_BETWEEN, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_SPACE_EVENLY);
+lv_obj_remove_flag( ui_VersionPanel, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+lv_obj_set_style_pad_row(ui_VersionPanel, 0, LV_PART_MAIN| LV_STATE_DEFAULT);
+lv_obj_set_style_pad_column(ui_VersionPanel, 20, LV_PART_MAIN| LV_STATE_DEFAULT);
+
+ui_Label4 = lv_label_create(ui_VersionPanel);
+lv_obj_set_width( ui_Label4, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_Label4, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_align( ui_Label4, LV_ALIGN_CENTER );
+lv_label_set_text(ui_Label4,"(c) karl@pitrich.com");
+
+ui_VersionLabel = lv_label_create(ui_VersionPanel);
+lv_obj_set_width( ui_VersionLabel, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_VersionLabel, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_align( ui_VersionLabel, LV_ALIGN_CENTER );
+lv_label_set_text(ui_VersionLabel,"aabbccdd");
+
 ui_CounterContainer = lv_obj_create(ui_SettingsMain);
 lv_obj_remove_style_all(ui_CounterContainer);
 lv_obj_set_width( ui_CounterContainer, lv_pct(100));

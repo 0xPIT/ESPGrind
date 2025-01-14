@@ -203,7 +203,7 @@ static void ensureTimer() {
 
 static void startMillFromButton(lv_obj_t *button) {
     if (!timer) {
-        ESP_LOGE(TAG, "timer not initialized");
+        ESP_LOGE(TAG, " timer not initialized");
         return;
     }
 
@@ -304,11 +304,11 @@ void onBrightnessChanged(lv_event_t *e) {
 void onSettingsScreenLoaded(lv_event_t *e) {
     // update gui with elements not available in squareline studio
     lv_label_set_text(ui_SettingsExitLabel, LV_SYMBOL_LEFT);
+    lv_label_set_text(ui_VersionLabel, GIT_VERSION);
 
     settings_t *settings = settingsGet();
     lv_slider_set_value(ui_BrightnessSlider, settings->brightness, LV_ANIM_OFF);
     lv_roller_set_selected(ui_ScreensaverTimeout, settings->screensaverTimeout, LV_ANIM_OFF);
-
 
     lv_obj_t *grindCounters[4] = {ui_Counter1, ui_Counter2, ui_Counter3, ui_Counter4};
     for (int i = 0; i < 4; i++) {
@@ -329,7 +329,6 @@ void createButtonFocusGroup() {
         lv_group_add_obj(focusGroup, grindButtons[i]);
     }
 }
-
 
 void onScreensaverTimeoutchanged(lv_event_t *e) {
     uint16_t timeoutIdx = lv_roller_get_selected(ui_ScreensaverTimeout);
@@ -364,6 +363,8 @@ void ui_InitialActions(lv_event_t *e) {
             break;
         }
     }
+
+    ESP_LOGI(TAG, "ESPGrind git version: %s", GIT_VERSION);
 
     initialized = true;
 }
