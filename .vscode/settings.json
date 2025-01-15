@@ -5,6 +5,7 @@
     "files.associations": {
         "esp_lcd_touch_tt21100.h": "c",
         "esp_lcd_touch.h": "c",
-        "esp-box.h": "c"
+        "esp-box.h": "c",
+        "spi_master.h": "c"
     }
 } 

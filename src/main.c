@@ -7,7 +7,8 @@
 #include "esp_log.h"
 
 // #include "bsp/esp-box.h"
-#include "bsp/waveshare-esp32s3-touch2.8.bsp.h"
+// #include "bsp/waveshare-esp32s3-touch2.8.bsp.h"
+#include "bsp/cyd-esp32-2432S024C.bsp.h"
 
 #include "lvgl.h"
 #include "ui/ui.h"
@@ -88,9 +89,10 @@ static void guiTask(void *pvParameter) {
 void app_main(void)
 {
     nvs_init();
-    settingsLoad();
+    settingsInit();
 
     ESP_LOGI(TAG, "bsp_i2c_init");
+    bsp_init();
     bsp_i2c_init();
 
     ESP_LOGI(TAG, "bsp_display_start");
@@ -105,6 +107,7 @@ void app_main(void)
 
     while (1) {
         vTaskDelay(1000);
+        // ESP_LOGI(TAG, "battery voltage: %f", bsp_battery_get_voltage());
     }
 }
 

@@ -18,7 +18,8 @@ typedef struct {
 
 static const mill_config_t MillConfig = {
     // .relais_pin = GPIO_NUM_14, // convenient for LED on ESP_BOX
-    .relais_pin = GPIO_NUM_15,    // Waveshare 2.8 Touch
+    // .relais_pin = GPIO_NUM_15,    // Waveshare 2.8 Touch
+    .relais_pin = GPIO_NUM_22,    // CYD-ESP32-2432S024C
     .on_level = 1
 };
 
