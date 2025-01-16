@@ -261,13 +261,13 @@ esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t
     touch_i2c_init();
 
     const esp_lcd_touch_config_t tp_cfg = {
-        .x_max = BSP_LCD_V_RES,
-        .y_max = BSP_LCD_H_RES,
+        .x_max = TOUCH_CONFIG_X_MAX,
+        .y_max = TOUCH_CONFIG_Y_MAX,
         .rst_gpio_num = TOUCH_CONFIG_RST_GPIO_NUM,
         .int_gpio_num = GPIO_NUM_NC, //TOUCH_CONFIG_INT_GPIO_NUM,  // too fast using interrupt
         .levels = {
-			.reset = 0,
-			.interrupt = 0,
+			.reset = TOUCH_CONFIG_LEVELS_RESET,
+			.interrupt = TOUCH_CONFIG_LEVELS_INTERRUPT,
 		},
         .flags = {
             .swap_xy  = TOUCH_SWAP_XY,
