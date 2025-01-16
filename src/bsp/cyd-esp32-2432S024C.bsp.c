@@ -1,8 +1,7 @@
 #include "driver/gpio.h"
 #include "driver/ledc.h"
 #include "driver/spi_master.h"
-// #include "driver/i2c_master.h"
-#include "driver/i2c.h"
+#include "driver/i2c_master.h"
 #include "esp_adc/adc_oneshot.h"
 #include "esp_adc/adc_continuous.h"
 #include "esp_err.h"
@@ -212,62 +211,42 @@ static lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg)
     return lvgl_port_add_disp(&disp_cfg);
 }
 
-esp_err_t touch_i2c_init(
-    /*i2c_master_bus_handle_t *bus_handle, i2c_master_dev_handle_t *dev_handle*/
-)
+i2c_master_bus_handle_t touch_i2c_bus_handle;
+i2c_master_dev_handle_t touch_i2c_dev_handle;
+
+esp_err_t touch_i2c_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_handle_t *dev_handle)
 {
-    //  i2c_master_bus_config_t bus_config = {
-    //     .i2c_port = I2C_MASTER_NUM,
-    //     .sda_io_num = TOUCH_I2C_CONFIG_SDA_IO_NUM,
-    //     .scl_io_num = TOUCH_I2C_CONFIG_SCL_IO_NUM,
-    //     .clk_source = I2C_CLK_SRC_DEFAULT,
-    //     .glitch_ignore_cnt = 7,
-    //     .flags.enable_internal_pullup = true,
-    // };
-    // ESP_ERROR_CHECK(i2c_new_master_bus(&bus_config, bus_handle));
-
-    // i2c_device_config_t dev_config = {
-    //     .dev_addr_length = I2C_ADDR_BIT_LEN_7,
-    //     .device_address = ESP_LCD_TOUCH_IO_I2C_CST816S_ADDRESS,
-    //     .scl_speed_hz = I2C_MASTER_FREQ_HZ,
-    // };
-    // ESP_ERROR_CHECK(i2c_master_bus_add_device(*bus_handle, &dev_config, dev_handle));
-
-
-    int i2c_master_port = TOUCH_I2C_HOST;
-    i2c_config_t conf = {
-        .mode = I2C_MODE_MASTER,
+     i2c_master_bus_config_t bus_config = {
+        .i2c_port = I2C_MASTER_NUM,
         .sda_io_num = TOUCH_I2C_CONFIG_SDA_IO_NUM,
         .scl_io_num = TOUCH_I2C_CONFIG_SCL_IO_NUM,
-        .sda_pullup_en = TOUCH_I2C_CONFIG_SDA_PULLUP_EN,
-        .scl_pullup_en = TOUCH_I2C_CONFIG_SCL_PULLUP_EN,
-        .master.clk_speed = TOUCH_I2C_CONFIG_MASTER_CLK_SPEED,
-        // .clk_flags = TOUCH_I2C_CONFIG_CLK_FLAGS
+        .clk_source = I2C_CLK_SRC_DEFAULT,
+        .glitch_ignore_cnt = 7,
+        .flags.enable_internal_pullup = true,
     };
+    ESP_ERROR_CHECK(i2c_new_master_bus(&bus_config, bus_handle));
 
-    ESP_LOGI(TAG,"Initializing I2C for display touch");
+    return ESP_OK;
+}
 
-    i2c_param_config(i2c_master_port, &conf);
-    return i2c_driver_install(i2c_master_port, conf.mode, I2C_MASTER_RX_BUF_DISABLE, I2C_MASTER_TX_BUF_DISABLE, 0);
+void touch_interrupt_callback(esp_lcd_touch_handle_t tp) {
+    ESP_LOGI(TAG, "Touch interrupt callback");
 }
 
 
-//i2c_master_bus_handle_t touch_i2c_bus_handle;
-//i2c_master_dev_handle_t touch_i2c_dev_handle;
-
 esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t *ret_touch)
 {
-    // touch_i2c_init(&touch_i2c_bus_handle, &touch_i2c_dev_handle); // uses different pins
-    touch_i2c_init();
+    touch_i2c_init(&touch_i2c_bus_handle, &touch_i2c_dev_handle);
 
     const esp_lcd_touch_config_t tp_cfg = {
         .x_max = TOUCH_CONFIG_X_MAX,
         .y_max = TOUCH_CONFIG_Y_MAX,
         .rst_gpio_num = TOUCH_CONFIG_RST_GPIO_NUM,
-        .int_gpio_num = GPIO_NUM_NC, //TOUCH_CONFIG_INT_GPIO_NUM,  // too fast using interrupt
+        // .int_gpio_num = TOUCH_CONFIG_INT_GPIO_NUM,  // too fast using interrupt
+        .int_gpio_num = GPIO_NUM_NC, // does not work using the interrupt pin
         .levels = {
 			.reset = TOUCH_CONFIG_LEVELS_RESET,
-			.interrupt = TOUCH_CONFIG_LEVELS_INTERRUPT,
+			// .interrupt = TOUCH_CONFIG_LEVELS_INTERRUPT,
 		},
         .flags = {
             .swap_xy  = TOUCH_SWAP_XY,
@@ -277,8 +256,9 @@ esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t
     };
 
     esp_lcd_panel_io_handle_t tp_io_handle = NULL;
-    const esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST816S_CONFIG();
-    esp_lcd_new_panel_io_i2c((esp_lcd_i2c_bus_handle_t)TOUCH_I2C_HOST, &tp_io_config, &tp_io_handle);
+    esp_lcd_panel_io_i2c_config_t tp_io_config = ESP_LCD_TOUCH_IO_I2C_CST816S_CONFIG();
+    tp_io_config.scl_speed_hz = TOUCH_I2C_CONFIG_MASTER_CLK_SPEED; // override error in default config
+    esp_lcd_new_panel_io_i2c(touch_i2c_bus_handle, &tp_io_config, &tp_io_handle);
     esp_lcd_touch_new_i2c_cst816s(tp_io_handle, &tp_cfg, ret_touch);
 
     return ESP_OK;
