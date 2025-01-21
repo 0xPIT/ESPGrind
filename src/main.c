@@ -90,8 +90,8 @@ void app_main(void)
     nvs_init();
     settingsLoad();
 
-    ESP_LOGI(TAG, "bsp_i2c_init");
-    bsp_i2c_init();
+    //ESP_LOGI(TAG, "bsp_i2c_init");
+    //bsp_i2c_init();
 
     ESP_LOGI(TAG, "bsp_display_start");
     bsp_display_start();
