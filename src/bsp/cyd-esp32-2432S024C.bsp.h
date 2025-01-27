@@ -66,7 +66,7 @@
 #define BSP_LCD_H_RES              (320)
 #define BSP_LCD_V_RES              (240)
 
-#define BSP_LCD_DRAW_BUF_HEIGHT    (50)
+#define BSP_LCD_DRAW_BUF_HEIGHT     BSP_LCD_V_RES
 #define BSP_LCD_SPI_BUS_MAX_TRANSFER_SZ ((BSP_LCD_H_RES * BSP_LCD_DRAW_BUF_HEIGHT) * sizeof(uint16_t))
 
 #define LV_COLOR_16_SWAP 1

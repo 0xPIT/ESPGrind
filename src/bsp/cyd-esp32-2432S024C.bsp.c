@@ -260,7 +260,7 @@ esp_err_t bsp_display_new(const bsp_display_config_t *config, esp_lcd_panel_hand
     esp_lcd_panel_reset(*ret_panel);
     esp_lcd_panel_init(*ret_panel);
     esp_lcd_panel_mirror(*ret_panel, false, false); // change only in lvgl init
-    esp_lcd_panel_swap_xy(*ret_panel, false); // change only in lvgl init
+    esp_lcd_panel_swap_xy(*ret_panel, false);       // change only in lvgl init
 
     return ret;
 
@@ -329,14 +329,10 @@ lv_display_t *bsp_display_start(void)
     bsp_display_cfg_t cfg = {
         .lvgl_port_cfg = ESP_LVGL_PORT_INIT_CONFIG(),
         .buffer_size = BSP_LCD_H_RES * BSP_LCD_DRAW_BUF_HEIGHT,
-#if CONFIG_BSP_LCD_DRAW_BUF_DOUBLE
-        .double_buffer = 1,
-#else
-        .double_buffer = 1,
-#endif
+        .double_buffer = true,
         .flags = {
             .buff_dma = true,
-            .buff_spiram = false,
+            .buff_spiram = true,
         }
     };
     return bsp_display_start_with_config(&cfg);
