@@ -120,97 +120,6 @@ esp_err_t bsp_display_backlight_on(void)
     return bsp_display_brightness_set(100);
 }
 
-esp_err_t bsp_display_new(const bsp_display_config_t *config, esp_lcd_panel_handle_t *ret_panel, esp_lcd_panel_io_handle_t *ret_io)
-{
-    esp_err_t ret = ESP_OK;
-    ESP_RETURN_ON_ERROR(bsp_display_brightness_init(), TAG, "Brightness init failed");
-
-    ESP_LOGD(TAG, "Initialize SPI bus");
-    const spi_bus_config_t buscfg = {                                                         
-        .sclk_io_num = BSP_LCD_SCLK,                                            
-        .mosi_io_num = BSP_LCD_MOSI,                                            
-        .miso_io_num = BSP_LCD_MISO,                                            
-        .quadwp_io_num = BSP_LCD_SPI_BUS_QUADWP_IO_NUM,                                                            
-        .quadhd_io_num = BSP_LCD_SPI_BUS_QUADHD_IO_NUM,                                                            
-        .max_transfer_sz = BSP_LCD_SPI_BUS_MAX_TRANSFER_SZ,    
-    };
-    ESP_ERROR_CHECK(spi_bus_initialize(BSP_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO));   
-
-    ESP_LOGD(TAG, "Install panel IO");
-    const esp_lcd_panel_io_spi_config_t io_config = {                                             
-        .dc_gpio_num = BSP_LCD_DC,
-        .cs_gpio_num = BSP_LCD_CS,
-        .pclk_hz = BSP_LCD_PIXEL_CLOCK_HZ,
-        .lcd_cmd_bits = BSP_LCD_CMD_BITS,
-        .lcd_param_bits = BSP_LCD_PARAM_BITS,
-        .spi_mode = 0,
-        .trans_queue_depth = 10
-    };
-    ESP_ERROR_CHECK(esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)BSP_LCD_SPI_NUM, &io_config, ret_io));
-
-    ESP_LOGD(TAG, "Install LCD panel");    
-    const esp_lcd_panel_dev_config_t panel_config = {
-        .reset_gpio_num = BSP_LCD_RST,
-        .color_space = BSP_LCD_COLOR_SPACE,
-        .bits_per_pixel = BSP_LCD_BITS_PER_PIXEL
-    };
-    ESP_GOTO_ON_ERROR(esp_lcd_new_panel_ili9341(*ret_io, &panel_config, ret_panel), err, TAG, "New panel failed");
-
-    esp_lcd_panel_reset(*ret_panel);
-    esp_lcd_panel_init(*ret_panel);
-    esp_lcd_panel_mirror(*ret_panel, true, false);
-
-    return ret;
-
-err:
-    if (*ret_panel) {
-        esp_lcd_panel_del(*ret_panel);
-    }
-    if (*ret_io) {
-        esp_lcd_panel_io_del(*ret_io);
-    }
-    spi_bus_free(BSP_LCD_SPI_NUM);
-    return ret;
-}
-
-static lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg)
-{
-    assert(cfg != NULL);
-    esp_lcd_panel_io_handle_t io_handle = NULL;
-    esp_lcd_panel_handle_t panel_handle = NULL;
-    const bsp_display_config_t bsp_disp_cfg = {
-        .max_transfer_sz = (BSP_LCD_H_RES * BSP_LCD_DRAW_BUF_HEIGHT) * sizeof(uint16_t),
-    };
-    bsp_display_new(&bsp_disp_cfg, &panel_handle, &io_handle);
-
-    esp_lcd_panel_disp_on_off(panel_handle, true);
-
-    ESP_LOGD(TAG, "Add LCD screen");
-    const lvgl_port_display_cfg_t disp_cfg = {
-        .io_handle = io_handle,
-        .panel_handle = panel_handle,
-        .buffer_size = cfg->buffer_size,
-        .double_buffer = cfg->double_buffer,
-        .hres = BSP_LCD_H_RES,
-        .vres = BSP_LCD_V_RES,
-        .monochrome = false,
-        .rotation = {
-            .swap_xy  = true,
-            .mirror_x = false,
-            .mirror_y = false,
-        },
-        .flags = {
-            .buff_dma = cfg->flags.buff_dma,
-            .buff_spiram = cfg->flags.buff_spiram,
-#if LVGL_VERSION_MAJOR >= 9
-            .swap_bytes = (BSP_LCD_BIGENDIAN ? true : false),
-#endif
-        }
-    };
-
-    return lvgl_port_add_disp(&disp_cfg);
-}
-
 i2c_master_bus_handle_t touch_i2c_bus_handle;
 i2c_master_dev_handle_t touch_i2c_dev_handle;
 
@@ -233,7 +142,6 @@ void touch_interrupt_callback(esp_lcd_touch_handle_t tp) {
     ESP_LOGI(TAG, "Touch interrupt callback");
 }
 
-
 esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t *ret_touch)
 {
     touch_i2c_init(&touch_i2c_bus_handle, &touch_i2c_dev_handle);
@@ -242,7 +150,7 @@ esp_err_t bsp_touch_new(const bsp_touch_config_t *config, esp_lcd_touch_handle_t
         .x_max = TOUCH_CONFIG_X_MAX,
         .y_max = TOUCH_CONFIG_Y_MAX,
         .rst_gpio_num = TOUCH_CONFIG_RST_GPIO_NUM,
-        // .int_gpio_num = TOUCH_CONFIG_INT_GPIO_NUM,  // too fast using interrupt
+        // .int_gpio_num = TOUCH_CONFIG_INT_GPIO_NUM,
         .int_gpio_num = GPIO_NUM_NC, // does not work using the interrupt pin
         .levels = {
 			.reset = TOUCH_CONFIG_LEVELS_RESET,
@@ -277,6 +185,134 @@ static lv_indev_t *bsp_display_indev_init(lv_display_t *disp)
     return lvgl_port_add_touch(&touch_cfg);
 }
 
+// display does not work with defailt init sequence, this one works.
+// source: https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/blob/8ec3f68fce48363ffa1aea607b329e1412ac11c7/Examples/ESP-IDF/LCD/components/LCD/lcd.c#L29
+// 
+static const ili9341_lcd_init_cmd_t ili_init_cmds[] = {
+    //  {cmd, { data }, data_size, delay_ms}
+		{0xCF, (uint8_t []){0x00, 0xD9, 0X30}, 3, 0 },
+		{0xED, (uint8_t []){0x64, 0x03, 0X12, 0X81}, 4, 0},
+		{0xE8, (uint8_t []){0x85, 0x10, 0x7A}, 3, 0},
+		{0xCB, (uint8_t []){0x39, 0x2C, 0x00, 0x34, 0x02}, 5, 0},
+		{0xF7, (uint8_t []){0x20}, 1, 0},
+		{0xEA, (uint8_t []){0x00, 0x00}, 2, 0},
+		{0xC0, (uint8_t []){0x1B}, 1, 0},          /*Power control*/
+		{0xC1, (uint8_t []){0x12}, 1, 0},          /*Power control */
+		{0xC5, (uint8_t []){0x26, 0x26}, 2, 0},    /*VCOM control*/
+		{0xC7, (uint8_t []){0xB0}, 1, 0},          /*VCOM control*/
+		{0x36, (uint8_t []){0x08}, 1, 0},          /*Memory Access Control*/
+		{0x3A, (uint8_t []){0x55}, 1, 0},			/*Pixel Format Set*/
+		{0xB1, (uint8_t []){0x00, 0x1A}, 2, 0},
+		{0xB6, (uint8_t []){0x0A, 0xA2}, 2, 0},
+		{0xF2, (uint8_t []){0x00}, 1, 0},	
+		{0x26, (uint8_t []){0x01}, 1, 0},	
+		{0xE0, (uint8_t []){0x1F, 0x24, 0x24, 0x0D, 0x12, 0x09, 0x52, 0XB7, 0x3F, 0x0C, 0x15, 0x06, 0x0E, 0x08, 0x00}, 15, 0},
+		{0XE1, (uint8_t []){0x00, 0x1B, 0x1B, 0x02, 0x0E, 0x06, 0x2E, 0x48, 0x3F, 0x03, 0x0A, 0x09, 0x31, 0x37, 0x1F}, 15, 0},
+		{0x2B, (uint8_t []){0x00, 0x00, 0x01, 0x3f}, 4, 0},
+		{0x2A, (uint8_t []){0x00, 0x00, 0x00, 0xEF}, 4, 0},
+		{0x11, (uint8_t []){0}, 0, 80},
+		{0x29, (uint8_t []){0}, 0, 80},
+};
+
+static const ili9341_vendor_config_t ili_vendor_config = {
+    .init_cmds = ili_init_cmds,
+    .init_cmds_size = 22
+};
+
+esp_err_t bsp_display_new(const bsp_display_config_t *config, esp_lcd_panel_handle_t *ret_panel, esp_lcd_panel_io_handle_t *ret_io)
+{
+    esp_err_t ret = ESP_OK;
+    ESP_RETURN_ON_ERROR(bsp_display_brightness_init(), TAG, "Brightness init failed");
+
+    ESP_LOGD(TAG, "Initialize SPI bus");
+    const spi_bus_config_t buscfg = {                                                         
+        .sclk_io_num = BSP_LCD_SCLK,                                            
+        .mosi_io_num = BSP_LCD_MOSI,                                            
+        .miso_io_num = BSP_LCD_MISO,                                            
+        .quadwp_io_num = BSP_LCD_SPI_BUS_QUADWP_IO_NUM,                                                            
+        .quadhd_io_num = BSP_LCD_SPI_BUS_QUADHD_IO_NUM,                                                            
+        .max_transfer_sz = BSP_LCD_SPI_BUS_MAX_TRANSFER_SZ,    
+    };
+    ESP_ERROR_CHECK(spi_bus_initialize(BSP_LCD_SPI_NUM, &buscfg, SPI_DMA_CH_AUTO));   
+
+    ESP_LOGD(TAG, "Install panel IO");
+    const esp_lcd_panel_io_spi_config_t io_config = {                                             
+        .dc_gpio_num = BSP_LCD_DC,
+        .cs_gpio_num = BSP_LCD_CS,
+        .pclk_hz = BSP_LCD_PIXEL_CLOCK_HZ,
+        .lcd_cmd_bits = BSP_LCD_CMD_BITS,
+        .lcd_param_bits = BSP_LCD_PARAM_BITS,
+        .spi_mode = 0,
+        .trans_queue_depth = 10
+    };
+    ESP_ERROR_CHECK(esp_lcd_new_panel_io_spi((esp_lcd_spi_bus_handle_t)BSP_LCD_SPI_NUM, &io_config, ret_io));
+
+    ESP_LOGD(TAG, "Install LCD panel");    
+    const esp_lcd_panel_dev_config_t panel_config = {
+        .reset_gpio_num = BSP_LCD_RST,
+        .color_space = BSP_LCD_COLOR_SPACE,
+        .bits_per_pixel = BSP_LCD_BITS_PER_PIXEL,
+        .vendor_config = (void *)&ili_vendor_config
+    };
+
+    ESP_GOTO_ON_ERROR(esp_lcd_new_panel_ili9341(*ret_io, &panel_config, ret_panel), err, TAG, "New panel failed");
+
+    esp_lcd_panel_reset(*ret_panel);
+    esp_lcd_panel_init(*ret_panel);
+    esp_lcd_panel_mirror(*ret_panel, false, false); // change only in lvgl init
+    esp_lcd_panel_swap_xy(*ret_panel, false); // change only in lvgl init
+
+    return ret;
+
+err:
+    if (*ret_panel) {
+        esp_lcd_panel_del(*ret_panel);
+    }
+    if (*ret_io) {
+        esp_lcd_panel_io_del(*ret_io);
+    }
+    spi_bus_free(BSP_LCD_SPI_NUM);
+    return ret;
+}
+
+static lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg)
+{
+    assert(cfg != NULL);
+    esp_lcd_panel_io_handle_t io_handle = NULL;
+    esp_lcd_panel_handle_t panel_handle = NULL;
+    
+    const bsp_display_config_t bsp_disp_cfg = {
+        .max_transfer_sz = (BSP_LCD_H_RES * BSP_LCD_DRAW_BUF_HEIGHT) * sizeof(uint16_t),
+    };
+
+    bsp_display_new(&bsp_disp_cfg, &panel_handle, &io_handle);
+
+    esp_lcd_panel_disp_on_off(panel_handle, true);
+
+    ESP_LOGD(TAG, "Add LCD screen");
+    const lvgl_port_display_cfg_t disp_cfg = {
+        .io_handle = io_handle,
+        .panel_handle = panel_handle,
+        .buffer_size = cfg->buffer_size,
+        .double_buffer = cfg->double_buffer,
+        .hres = BSP_LCD_H_RES,
+        .vres = BSP_LCD_V_RES,
+        .monochrome = false,
+        .rotation = {
+            .swap_xy  = BSP_LCD_SWAP_XY,
+            .mirror_x = BSP_LCD_MIRROR_X,
+            .mirror_y = BSP_LCD_MIRROR_Y,
+        },
+        .flags = {
+            .buff_dma = cfg->flags.buff_dma,
+            .buff_spiram = cfg->flags.buff_spiram,
+            .swap_bytes = true,
+        }
+    };
+
+    return lvgl_port_add_disp(&disp_cfg);
+}
+
 lv_display_t *bsp_display_start_with_config(const bsp_display_cfg_t *cfg)
 {
     assert(cfg != NULL);
@@ -296,7 +332,7 @@ lv_display_t *bsp_display_start(void)
 #if CONFIG_BSP_LCD_DRAW_BUF_DOUBLE
         .double_buffer = 1,
 #else
-        .double_buffer = 0,
+        .double_buffer = 1,
 #endif
         .flags = {
             .buff_dma = true,
@@ -330,7 +366,6 @@ static bool battery_initialized = false;
 static adc_oneshot_unit_handle_t bsp_battery_adc_handle;
 static bool bsp_battery_calibrated = false;
 static adc_cali_handle_t bsp_battery_adc_calibration = NULL;
-
 
 static bool bsp_battery_adc_calibration_init(adc_unit_t unit, adc_channel_t channel, adc_atten_t atten, adc_cali_handle_t *out_handle)
 {
@@ -428,17 +463,16 @@ float bsp_battery_get_voltage() {
 }
 
 void  bsp_init_rgb_led() {
-    gpio_set_direction(BSP_RGB_LED_R, GPIO_MODE_OUTPUT);
-    gpio_set_direction(BSP_RGB_LED_G, GPIO_MODE_OUTPUT);
-    gpio_set_direction(BSP_RGB_LED_B, GPIO_MODE_OUTPUT);
-    gpio_set_level(BSP_RGB_LED_R, 1);
-    gpio_set_level(BSP_RGB_LED_G, 1);
-    gpio_set_level(BSP_RGB_LED_B, 1);
+    // gpio_set_direction(BSP_RGB_LED_R, GPIO_MODE_OUTPUT);
+    // gpio_set_direction(BSP_RGB_LED_G, GPIO_MODE_OUTPUT);
+    // gpio_set_direction(BSP_RGB_LED_B, GPIO_MODE_OUTPUT);
+    // gpio_set_level(BSP_RGB_LED_R, 1);
+    // gpio_set_level(BSP_RGB_LED_G, 1);
+    // gpio_set_level(BSP_RGB_LED_B, 1);
 }
 
 
 void bsp_init() {
-    bsp_init_rgb_led();
-
+    
     // bsp_battery_init();
 }

@@ -1,7 +1,7 @@
 description: ESPGrind
 
 targets:
-    - esp32
+    - esp32s3
 
 dependencies:
   idf: '>=5'

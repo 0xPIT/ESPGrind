@@ -24,11 +24,11 @@
 
 // pinout 
 
-#define BSP_I2C_SCL           (GPIO_NUM_18)
-#define BSP_I2C_SDA           (GPIO_NUM_8)
+#define BSP_I2C_SCL           (GPIO_NUM_39) // (GPIO_NUM_18)
+#define BSP_I2C_SDA           (GPIO_NUM_21) // (GPIO_NUM_8)
 #define BSP_I2C_NUM           (CONFIG_BSP_I2C_NUM)
-#define I2C_SCL_IO            (10)        /*!< GPIO number used for I2C master clock */
-#define I2C_SDA_IO            (11)        /*!< GPIO number used for I2C master data  */
+#define I2C_SCL_IO            (GPIO_NUM_11) // (GPIO_NUM_10)        /*!< GPIO number used for I2C master clock */
+#define I2C_SDA_IO            (GPIO_NUM_12) // (GPIO_NUM_11)        /*!< GPIO number used for I2C master data  */
 #define I2C_MASTER_NUM              0         /*!< I2C master i2c port number, the number of i2c peripheral interfaces available will depend on the chip */
 #define I2C_MASTER_FREQ_HZ          400000    /*!< I2C master clock frequency */
 #define I2C_MASTER_TX_BUF_DISABLE   0         /*!< I2C master doesn't need buffer */
@@ -36,18 +36,18 @@
 #define I2C_MASTER_TIMEOUT_MS       1000
 
 #define BSP_LCD_SPI_NUM        (SPI2_HOST)
-#define BSP_LCD_MISO           (GPIO_NUM_12)
-#define BSP_LCD_MOSI           (GPIO_NUM_13)
-#define BSP_LCD_SCLK           (GPIO_NUM_14)
-#define BSP_LCD_CS             (GPIO_NUM_15)
-#define BSP_LCD_DC             (GPIO_NUM_2)
+#define BSP_LCD_SCLK           (GPIO_NUM_3) // (GPIO_NUM_14) xxxxxxxxxxxxxxxxxxx bodged
+#define BSP_LCD_MISO           (GPIO_NUM_10) // (GPIO_NUM_12) xxxxxxxxxxxxxxxxxxx bodged
+#define BSP_LCD_MOSI           (GPIO_NUM_9)  // (GPIO_NUM_13)
+#define BSP_LCD_CS             (GPIO_NUM_47) // (GPIO_NUM_15)
+#define BSP_LCD_DC             (GPIO_NUM_48) // (GPIO_NUM_2)
 #define BSP_LCD_RST            (GPIO_NUM_NC)
 
 #define BSP_LCD_SPI_DMA_CHANNEL SPI_DMA_CH_AUTO
 #define BSP_LCD_SPI_BUS_QUADWP_IO_NUM GPIO_NUM_NC
 #define BSP_LCD_SPI_BUS_QUADHD_IO_NUM GPIO_NUM_NC
 
-#define BSP_LCD_BACKLIGHT      (GPIO_NUM_27)
+#define BSP_LCD_BACKLIGHT      (GPIO_NUM_8) // (GPIO_NUM_27)
 #define BSP_LCD_BACKLIGHT_ON    1
 #define BSP_LCD_BK_LIGHT_OFF    !BSP_LCD_BK_LIGHT_ON_LEVEL
 
@@ -59,27 +59,27 @@
 #define BSP_LCD_COLOR_FORMAT        (ESP_LCD_COLOR_FORMAT_RGB565)
 #define BSP_LCD_COLOR_SPACE         (ESP_LCD_COLOR_SPACE_BGR)
 
-#define BSP_LCD_PIXEL_CLOCK_HZ      (24 * 1000 * 1000)
+#define BSP_LCD_PIXEL_CLOCK_HZ      (40 * 1000 * 1000)
 #define BSP_LCD_BIGENDIAN           (0)
 #define BSP_LCD_BITS_PER_PIXEL      (16)
 
 #define BSP_LCD_H_RES              (320)
 #define BSP_LCD_V_RES              (240)
 
-#define BSP_LCD_DRAW_BUF_HEIGHT    (100)
+#define BSP_LCD_DRAW_BUF_HEIGHT    (50)
 #define BSP_LCD_SPI_BUS_MAX_TRANSFER_SZ ((BSP_LCD_H_RES * BSP_LCD_DRAW_BUF_HEIGHT) * sizeof(uint16_t))
 
 #define LV_COLOR_16_SWAP 1
 
-#define BSP_LCD_SWAP_XY false
+#define BSP_LCD_SWAP_XY true
 #define BSP_LCD_MIRROR_X true
 #define BSP_LCD_MIRROR_Y false
 
 #define TOUCH_I2C_HOST I2C_NUM_0
-#define TOUCH_I2C_CONFIG_SDA_IO_NUM (GPIO_NUM_33)
-#define TOUCH_I2C_CONFIG_SCL_IO_NUM (GPIO_NUM_32)
-#define TOUCH_CONFIG_RST_GPIO_NUM (GPIO_NUM_25)
-#define TOUCH_CONFIG_INT_GPIO_NUM (GPIO_NUM_21)
+#define TOUCH_I2C_CONFIG_SDA_IO_NUM (GPIO_NUM_16) // (GPIO_NUM_33)
+#define TOUCH_I2C_CONFIG_SCL_IO_NUM (GPIO_NUM_15) // (GPIO_NUM_32)
+#define TOUCH_CONFIG_RST_GPIO_NUM   (GPIO_NUM_17) // (GPIO_NUM_25)
+#define TOUCH_CONFIG_INT_GPIO_NUM   (GPIO_NUM_42) // (GPIO_NUM_21)
 #define TOUCH_I2C_CONFIG_SDA_PULLUP_EN GPIO_PULLUP_ENABLE
 #define TOUCH_I2C_CONFIG_SCL_PULLUP_EN GPIO_PULLUP_ENABLE
 
@@ -100,20 +100,21 @@
 #define TOUCH_MIRROR_X true
 #define TOUCH_MIRROR_Y false
 
-#define BSP_TF_CS 5
-#define BSP_TF_SPI_MOSI 23
-#define BSP_TF_SPI_SCLK 18
-#define BSP_TF_SPI_MISO 19
+#define BSP_TF_CS       (GPIO_NUM_38) // (GPIO_NUM_5)
+#define BSP_TF_SPI_MOSI (GPIO_NUM_1) // (GPIO_NUM_23)
+#define BSP_TF_SPI_SCLK (GPIO_NUM_39) // (GPIO_NUM_18)
+#define BSP_TF_SPI_MISO (GPIO_NUM_40) // (GPIO_NUM_19)
 
-#define BSP_RGB_LED_R 4
-#define BSP_RGB_LED_G 16
-#define BSP_RGB_LED_B 17
+// can't use LED because of PSRAM
+//#define BSP_RGB_LED_R   (GPIO_NUM_35) // (GPIO_NUM_4)
+//#define BSP_RGB_LED_G   (GPIO_NUM_36) // (GPIO_NUM_16)
+//#define BSP_RGB_LED_B   (GPIO_NUM_37) // (GPIO_NUM_17)
 
-#define BSP_LDR_GPIO 34
+#define BSP_LDR_GPIO (GPIO_NUM_6) // (GPIO_NUM_34)
 // #define BSP_LDR_ADC_CHANNEL    ADC1_GPIO34_CHANNEL
-#define BSP_LDR_ADC_ATTEN      ADC_ATTEN_DB_0
+#define BSP_LDR_ADC_ATTEN (ADC_ATTEN_DB_0)
 
-#define BSP_SPEAKER 26
+#define BSP_SPEAKER (GPIO_NUM_18) // (GPIO_NUM_26)
 
 #ifdef __cplusplus
 extern "C" {
